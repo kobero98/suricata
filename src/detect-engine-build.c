@@ -2039,9 +2039,12 @@ extern bool rule_engine_analysis_set;
 static int SigMatchPrepare(DetectEngineCtx *de_ctx)
 {
     SCEnter();
-
+    SCLogInfo("Sig Match Prepare start");
     Signature *s = de_ctx->sig_list;
     for (; s != NULL; s = s->next) {
+        
+        
+        SCLogInfo("%d %s",s->id,s->sig_str);
         /* set up inspect engines */
         DetectEngineAppInspectionEngine2Signature(de_ctx, s);
 
@@ -2051,6 +2054,7 @@ static int SigMatchPrepare(DetectEngineCtx *de_ctx)
             if (type == DETECT_SM_LIST_PMATCH && (s->init_data->init_flags & SIG_FLAG_INIT_STATE_MATCH))
                 continue;
             SigMatch *sm = s->init_data->smlists[type];
+            SCLogInfo("type: %d",type);
             s->sm_arrays[type] = SigMatchList2DataArray(sm);
         }
         /* set up the pkt inspection engines */

@@ -661,7 +661,7 @@ static inline bool DetectRunInspectRuleHeader(const Packet *p, const Flow *f, co
                 return false;
         }
     }
-    
+
     return true;
 }
 
