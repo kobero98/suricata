@@ -1883,6 +1883,7 @@ static int SigMatchListLen(SigMatch *sm)
 SigMatchData* SigMatchList2DataArray(SigMatch *head)
 {
     int len = SigMatchListLen(head);
+    SCLogInfo("len: %d",len);
     if (len == 0)
         return NULL;
 
@@ -1897,6 +1898,7 @@ SigMatchData* SigMatchList2DataArray(SigMatch *head)
     for (; sm != NULL; sm = sm->next, smd++) {
         smd->type = sm->type;
         smd->ctx = sm->ctx;
+        SCLogInfo("%s",sigmatch_table[smd->type].name);
         sm->ctx = NULL; // SigMatch no longer owns the ctx
         smd->is_last = (sm->next == NULL);
     }
