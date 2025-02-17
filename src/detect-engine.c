@@ -743,7 +743,7 @@ int DetectEngineAppInspectionEngine2Signature(DetectEngineCtx *de_ctx, Signature
                 DetectEngineBufferTypeGetById(de_ctx, s->init_data->buffers[x].id);
         if (b == NULL)
             FatalError("unknown buffer");
-
+        SCLogInfo("buffer type:%s f:%d p:%d app:%d",b->name,b->frame,b->packet,!(b->frame || b->packet));
         if (b->frame) {
             for (const DetectEngineFrameInspectionEngine *u = de_ctx->frame_inspect_engines;
                     u != NULL; u = u->next) {
