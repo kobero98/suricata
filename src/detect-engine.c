@@ -1977,7 +1977,7 @@ bool DetectEnginePktInspectionRun(ThreadVars *tv,
     SCEnter();
 
     for (DetectEnginePktInspectionEngine *e = s->pkt_inspect; e != NULL; e = e->next) {
-        SCLogInfo("%s",sigmatch_table[e->smd->type].name)
+        SCLogInfo("%s",sigmatch_table[e->smd->type].name);
         if (e->v1.Callback(det_ctx, e, s, p, alert_flags) != DETECT_ENGINE_INSPECT_SIG_MATCH) {
             SCLogDebug("sid %u: e %p Callback returned no match", s->id, e);
             return false;
