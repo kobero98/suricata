@@ -661,7 +661,7 @@ static inline bool DetectRunInspectRuleHeader(const Packet *p, const Flow *f, co
                 return false;
         }
     }
-
+    
     return true;
 }
 
@@ -823,11 +823,11 @@ static inline void DetectRulePacketRules(
                 goto next;
             }
         }
-
+        SCLogInfo("%d %s",s->id,s->sig_str);
         if (DetectRunInspectRuleHeader(p, pflow, s, sflags, s_proto_flags) == false) {
             goto next;
         }
-
+        SCLogInfo("%d %s",s->id,s->sig_str);
         if (DetectEnginePktInspectionRun(tv, det_ctx, s, pflow, p, &alert_flags) == false) {
             goto next;
         }
