@@ -280,7 +280,7 @@ static inline void DetectPrefilterMergeSort(DetectEngineCtx *de_ctx,
     Signature **match_array = det_ctx->match_array;
     Signature *s;
 
-    SCLogDebug("PMQ rule id array count %d", det_ctx->pmq.rule_id_array_cnt);
+    SCLogInfo("PMQ rule id array count %d", det_ctx->pmq.rule_id_array_cnt);
 
     /* Load first values. */
     if (likely(m_cnt)) {
