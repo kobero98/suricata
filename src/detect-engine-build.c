@@ -2054,7 +2054,7 @@ static int SigMatchPrepare(DetectEngineCtx *de_ctx)
             if (type == DETECT_SM_LIST_PMATCH && (s->init_data->init_flags & SIG_FLAG_INIT_STATE_MATCH))
                 continue;
             SigMatch *sm = s->init_data->smlists[type];
-            SCLogInfo("type: %d",type);
+            SCLogInfo("type: %s",DetectSigmatchListEnumToString(type));
             s->sm_arrays[type] = SigMatchList2DataArray(sm);
         }
         /* set up the pkt inspection engines */
