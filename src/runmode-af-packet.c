@@ -494,9 +494,13 @@ static void *ParseAFPConfig(const char *iface)
     }
 
     if (ConfGetChildValueWithDefault(if_root, if_default, "xdp-filter-file", &ebpf_file) != 1) {
-        aconf->xdp_filter_file = NULL;
+        
+                SCLogInfo("xdp-filter-file non trovato?!");
+                aconf->xdp_filter_file = NULL;
     } else {
+        SCLogInfo("il file ebpf viene caricato?");
 #ifdef HAVE_PACKET_XDP
+        SCLogInfo("Qui ci entra");
         aconf->ebpf_t_config.mode = AFP_MODE_XDP_BYPASS;
         aconf->ebpf_t_config.flags |= EBPF_XDP_CODE;
         aconf->xdp_filter_file = ebpf_file;
@@ -520,7 +524,7 @@ static void *ParseAFPConfig(const char *iface)
             BypassedFlowManagerRegisterUpdateFunc(EBPFUpdateFlow, NULL);
         }
 #else
-        SCLogWarning("%s: XDP filter set but XDP support is not built-in", iface);
+        SCLogInfo("%s: XDP filter set but XDP support is not built-in", iface);
 #endif
 #ifdef HAVE_PACKET_XDP
         const char *xdp_mode;
@@ -561,21 +565,21 @@ static void *ParseAFPConfig(const char *iface)
                 SCLogInfo("%s: loaded pinned maps from sysfs", iface);
                 break;
             case -1:
-                SCLogWarning("%s: failed to load XDP filter file", iface);
+                SCLogInfo("%s: failed to load XDP filter file", iface);
                 break;
             case 0:
                 ret = EBPFSetupXDP(aconf->iface, aconf->xdp_filter_fd, aconf->xdp_mode);
                 if (ret != 0) {
-                    SCLogWarning("%s: failed to set up XDP", iface);
+                    SCLogInfo("%s: failed to set up XDP", iface);
                 } else {
                     /* Try to get the xdp-cpu-redirect key */
                     const char *cpuset;
                     if (ConfGetChildValueWithDefault(if_root, if_default,
                                 "xdp-cpu-redirect", &cpuset) == 1) {
-                        SCLogConfig("%s: Setting up CPU map XDP", iface);
+                        SCLogInfo("%s: Setting up CPU map XDP", iface);
                         ConfNode *node = ConfGetChildWithDefault(if_root, if_default, "xdp-cpu-redirect");
                         if (node == NULL) {
-                            SCLogError("Previously found node has disappeared");
+                            SCLogInfo("Previously found node has disappeared");
                         } else {
                             EBPFBuildCPUSet(node, aconf->iface);
                         }
@@ -590,7 +594,7 @@ static void *ParseAFPConfig(const char *iface)
                 }
         }
 #else
-        SCLogError("%s: XDP support is not built-in", iface);
+        SCLogInfo("%s: XDP support is not built-in", iface);
 #endif
     }
 
