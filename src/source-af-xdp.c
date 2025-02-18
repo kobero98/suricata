@@ -802,7 +802,7 @@ static TmEcode ReceiveAFXDPLoop(ThreadVars *tv, void *data, void *slot)
             addr = xsk_umem__add_offset_to_addr(addr);
 
             uint8_t *pkt_data = xsk_umem__get_data(ptv->umem.buf, addr);
-            SCLogInfo("Packet %s"pkt_data);
+            SCLogInfo("Packet %s",pkt_data);
             struct meta_info *meta = (void *)(pkt_data - sizeof(struct meta_info));
             // Estraiamo l’IP sorgente
 		    __u32 ip = meta->src_ip;
