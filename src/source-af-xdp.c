@@ -808,7 +808,7 @@ static TmEcode ReceiveAFXDPLoop(ThreadVars *tv, void *data, void *slot)
             if (ip != 0) {
                 // Convertiamo in dotted-decimal e stampiamo
                 struct in_addr in;
-                in.s_addr = *srcMetaData;  // network order
+                in.s_addr = ip;  // network order
                 char ip_str[INET_ADDRSTRLEN] = {0};
                 inet_ntop(AF_INET, &in, ip_str, sizeof(ip_str));
                 SCLogInfo(">>> Received packet metadata src_ip=%s\n", ip_str);
