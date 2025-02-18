@@ -707,7 +707,7 @@ static TmEcode ReceiveAFXDPLoop(ThreadVars *tv, void *data, void *slot)
     // Indicate that the thread is actually running its application level code (i.e., it can poll
     // packets)
     TmThreadsSetFlag(tv, THV_RUNNING);
-
+    SCLogInfo("Receive mode afxdp");
     PacketPoolWait();
     while (1) {
         /* Start by checking the state of our interface */
@@ -797,7 +797,19 @@ static TmEcode ReceiveAFXDPLoop(ThreadVars *tv, void *data, void *slot)
             addr = xsk_umem__add_offset_to_addr(addr);
 
             uint8_t *pkt_data = xsk_umem__get_data(ptv->umem.buf, addr);
+            uint32_t *srcMetaData = (void *)(pkt_data - sizeof(uint32_t));
 
+            if (*srcMetaData != 0) {
+                // Convertiamo in dotted-decimal e stampiamo
+                struct in_addr in;
+                in.s_addr = ip;  // network order
+                char ip_str[INET_ADDRSTRLEN] = {0};
+
+                inet_ntop(AF_INET, &in, ip_str, sizeof(ip_str));
+                SCLogInfo(">>> Received packet metadata src_ip=%s\n", ip_str);
+		    }else{
+                SCLogInfo("not received");
+            }
             ptv->bytes += len;
 
             p->afxdp_v.fq_idx = idx_fq++;
