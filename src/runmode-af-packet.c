@@ -187,6 +187,7 @@ static void *ParseAFPConfig(const char *iface)
     const char *ebpf_file = NULL;
     const char *active_runmode = RunmodeGetActive();
 
+
     if (iface == NULL) {
         return NULL;
     }
