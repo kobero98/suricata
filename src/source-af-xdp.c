@@ -688,6 +688,11 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
 /**
  *  \brief Main AF_XDP reading Loop function
  */
+
+struct meta_info {
+	__u32 src_ip;
+};
+
 static TmEcode ReceiveAFXDPLoop(ThreadVars *tv, void *data, void *slot)
 {
     SCEnter();
@@ -797,14 +802,14 @@ static TmEcode ReceiveAFXDPLoop(ThreadVars *tv, void *data, void *slot)
             addr = xsk_umem__add_offset_to_addr(addr);
 
             uint8_t *pkt_data = xsk_umem__get_data(ptv->umem.buf, addr);
-            uint32_t *srcMetaData = (void *)(pkt_data - sizeof(uint32_t));
-
-            if (*srcMetaData != 0) {
+            struct meta_info *meta = (void *)(pkt_data - sizeof(struct meta_info));
+            // Estraiamo l’IP sorgente
+		    __u32 ip = meta->src_ip;
+            if (ip != 0) {
                 // Convertiamo in dotted-decimal e stampiamo
                 struct in_addr in;
                 in.s_addr = *srcMetaData;  // network order
                 char ip_str[INET_ADDRSTRLEN] = {0};
-
                 inet_ntop(AF_INET, &in, ip_str, sizeof(ip_str));
                 SCLogInfo(">>> Received packet metadata src_ip=%s\n", ip_str);
 		    }else{
