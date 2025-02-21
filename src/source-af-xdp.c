@@ -671,6 +671,39 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
     ptv->capture_afxdp_acquire_pkt_failed =
             StatsRegisterCounter("capture.afxdp.acquire_pkt_failed", ptv->tv);
 
+
+    DECLARE_LIBBPF_OPTS(bpf_object_open_opts, opts);
+    DECLARE_LIBXDP_OPTS(xdp_program_opts, xdp_opts, 0);
+    struct bpf_map *map;
+    custom_xsk = true;
+    xdp_opts.open_filename = "/home/suricata/evalNet/xdp-tutorial/af_xdp_meta/xdp_prog_kern.o";
+    xdp_opts.prog_name = cfg.progname;
+    xdp_opts.opts = &opts;
+    prog = xdp_program__open_file("/home/suricata/evalNet/xdp-tutorial/af_xdp_meta/xdp_prog_kern.o",NULL, &opts);
+    err = libxdp_get_error(prog);
+    if (err) {
+        libxdp_strerror(err, errmsg, sizeof(errmsg));
+        fprintf(stderr, "ERR: loading program: %s\n", errmsg);
+        return err;
+    }
+
+    err = xdp_program__attach(prog, ptv->ifindex, afxdpconfig->mode, 0);
+    if (err) {
+        libxdp_strerror(err, errmsg, sizeof(errmsg));
+        fprintf(stderr, "Couldn't attach XDP program on iface '%s' : %s (%d)\n",
+            cfg.ifname, errmsg, err);
+        return err;
+    }
+
+    /* We also need to load the xsks_map */
+    map = bpf_object__find_map_by_name(xdp_program__bpf_obj(prog), "xsks_map");
+    xsk_map_fd = bpf_map__fd(map);
+    if (xsk_map_fd < 0) {
+        fprintf(stderr, "ERROR: no xsks map found: %s\n",
+            strerror(xsk_map_fd));
+        exit(EXIT_FAILURE);
+    }
+
     /* Reserve memory for umem  */
     if (AcquireBuffer(ptv) != TM_ECODE_OK) {
         SCFree(ptv);
