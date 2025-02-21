@@ -438,7 +438,9 @@ static TmEcode OpenXSKSocket(AFXDPThreadVars *ptv)
 
     if ((ret = xsk_socket__create(&ptv->xsk.xsk, ptv->livedev->dev, ptv->xsk.queue.queue_num,
                  ptv->umem.umem, &ptv->xsk.rx, &ptv->xsk.tx, &ptv->xsk.cfg))) {
+        SCLogError("%s, %d",ptv->livedev->dev, ptv->xsk.queue.queue_num);
         SCLogError("Failed to create socket: %s", strerror(-ret));
+        SCLogError("%d %d %d %d",ENOPROTOOPT,ENOMEM,EFAULT,EINVAL);
         SCReturnInt(TM_ECODE_FAILED);
     }
     SCLogDebug("bind to %s on queue %u", ptv->iface, ptv->xsk.queue.queue_num);
