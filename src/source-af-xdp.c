@@ -680,7 +680,7 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
     struct bpf_map *map;
     xdp_opts.open_filename = "/home/suricata/evalNet/xdp-tutorial/af_xdp_meta/xdp_prog_kern.o";
     xdp_opts.opts = &opts;
-    struct xdp_program prog = xdp_program__open_file("/home/suricata/evalNet/xdp-tutorial/af_xdp_meta/xdp_prog_kern.o",NULL, &opts);
+    struct xdp_program* prog = xdp_program__open_file("/home/suricata/evalNet/xdp-tutorial/af_xdp_meta/xdp_prog_kern.o",NULL, &opts);
     int err = libxdp_get_error(prog);
     char errmsg[1024];
 
