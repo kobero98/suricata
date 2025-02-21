@@ -438,6 +438,9 @@ static TmEcode OpenXSKSocket(AFXDPThreadVars *ptv)
 
     if ((ret = xsk_socket__create(&ptv->xsk.xsk, ptv->livedev->dev, ptv->xsk.queue.queue_num,
                  ptv->umem.umem, &ptv->xsk.rx, &ptv->xsk.tx, &ptv->xsk.cfg))) {
+        char errormsg[1024];
+        libxdp_strerror(ret, errormsg, sizeof(errormsg));
+        SCLogInfo("%s",errormsg);
         SCLogError("%s, %d",ptv->livedev->dev, ptv->xsk.queue.queue_num);
         SCLogError("Failed to create socket: %s", strerror(-ret));
         SCLogError("%d %d %d %d",ENOPROTOOPT,ENOMEM,EFAULT,EINVAL);
@@ -597,7 +600,7 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
     SCEnter();
 
     AFXDPIfaceConfig *afxdpconfig = (AFXDPIfaceConfig *)initdata;
-
+    SCLogInfo("how many init thread?");
     if (initdata == NULL) {
         SCLogError("initdata == NULL");
         SCReturnInt(TM_ECODE_FAILED);
@@ -675,28 +678,28 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
     DECLARE_LIBBPF_OPTS(bpf_object_open_opts, opts);
     DECLARE_LIBXDP_OPTS(xdp_program_opts, xdp_opts, 0);
     struct bpf_map *map;
-    custom_xsk = true;
     xdp_opts.open_filename = "/home/suricata/evalNet/xdp-tutorial/af_xdp_meta/xdp_prog_kern.o";
     xdp_opts.opts = &opts;
-    prog = xdp_program__open_file("/home/suricata/evalNet/xdp-tutorial/af_xdp_meta/xdp_prog_kern.o",NULL, &opts);
-    err = libxdp_get_error(prog);
+    struct xdp_program prog = xdp_program__open_file("/home/suricata/evalNet/xdp-tutorial/af_xdp_meta/xdp_prog_kern.o",NULL, &opts);
+    int err = libxdp_get_error(prog);
+    char errmsg[1024];
+
     if (err) {
         libxdp_strerror(err, errmsg, sizeof(errmsg));
-        fprintf(stderr, "ERR: loading program: %s\n", errmsg);
+        SCLogError("ERR: loading program: %s\n", errmsg);
         return err;
     }
 
     err = xdp_program__attach(prog, ptv->ifindex, afxdpconfig->mode, 0);
-    if (err) {
+    if (err){
         libxdp_strerror(err, errmsg, sizeof(errmsg));
-        fprintf(stderr, "Couldn't attach XDP program on iface '%s' : %s (%d)\n",
-            cfg.ifname, errmsg, err);
+        SCLogError("ERR: Attach program: %s\n", errmsg);
         return err;
     }
 
     /* We also need to load the xsks_map */
     map = bpf_object__find_map_by_name(xdp_program__bpf_obj(prog), "xsks_map");
-    xsk_map_fd = bpf_map__fd(map);
+    int xsk_map_fd = bpf_map__fd(map);
     if (xsk_map_fd < 0) {
         fprintf(stderr, "ERROR: no xsks map found: %s\n",
             strerror(xsk_map_fd));
