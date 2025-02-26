@@ -683,7 +683,7 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
     struct xdp_program* prog = xdp_program__open_file("/home/kobero/evalNet/xdp-tutorial/af_xdp_meta/xdp_prog_kern.o",NULL, &opts);
     int err = libxdp_get_error(prog);
     char errmsg[1024];
-
+    SCLogInfo("mode: %d",afxdpconfig->mode);
     if (err) {
         libxdp_strerror(err, errmsg, sizeof(errmsg));
         SCLogError("ERR: loading program: %s\n", errmsg);
