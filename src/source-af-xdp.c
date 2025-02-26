@@ -303,7 +303,7 @@ static void AFXDPAllThreadsRunning(AFXDPThreadVars *ptv)
     SCMutexUnlock(&xsk_protect.queue_protect);
 }
 
-static TmEcode AcquireBuffer(AFXDPThreadVars *ptv)
+static TmEcode AcquireBuffer(AFXDPThreadVars *ptv,int xsk_map_fd)
 {
     int mmap_flags = MAP_PRIVATE | MAP_ANONYMOUS | ptv->umem.mmap_alignment_flag;
     ptv->umem.buf = mmap(NULL, MEM_BYTES, PROT_READ | PROT_WRITE, mmap_flags, -1, 0);
@@ -425,7 +425,7 @@ static void AFXDPSwitchState(AFXDPThreadVars *ptv, int state)
     ptv->afxdp_state = state;
 }
 
-static TmEcode OpenXSKSocket(AFXDPThreadVars *ptv)
+static TmEcode OpenXSKSocket(AFXDPThreadVars *ptv,int xsk_map_fd)
 {
     int ret;
 
@@ -451,7 +451,8 @@ static TmEcode OpenXSKSocket(AFXDPThreadVars *ptv)
     /* For polling and socket options */
     ptv->xsk.fd.fd = xsk_socket__fd(ptv->xsk.xsk);
     ptv->xsk.fd.events = POLLIN;
-
+    ret = xsk_socket__update_xskmap(xsk_info->xsk, xsk_map_fd);
+		if (ret) SCLogInfo("updare Error \n");
     /* Set state */
     AFXDPSwitchState(ptv, AFXDP_STATE_UP);
 
@@ -475,7 +476,7 @@ static void AFXDPCloseSocket(AFXDPThreadVars *ptv)
     memset(&ptv->umem.cq, 0, sizeof(struct xsk_ring_cons));
 }
 
-static TmEcode AFXDPSocketCreation(AFXDPThreadVars *ptv)
+static TmEcode AFXDPSocketCreation(AFXDPThreadVars *ptv,int xsk_map_fd)
 {
     if (ConfigureXSKUmem(ptv) != TM_ECODE_OK) {
         SCReturnInt(TM_ECODE_FAILED);
@@ -486,7 +487,7 @@ static TmEcode AFXDPSocketCreation(AFXDPThreadVars *ptv)
     }
 
     /* Open AF_XDP socket */
-    if (OpenXSKSocket(ptv) != TM_ECODE_OK) {
+    if (OpenXSKSocket(ptv,xsk_map_fd,int xsk_map_fd) != TM_ECODE_OK) {
         SCReturnInt(TM_ECODE_FAILED);
     }
 
@@ -521,7 +522,7 @@ static TmEcode AFXDPTryReopen(AFXDPThreadVars *ptv)
 {
     AFXDPCloseSocket(ptv);
     usleep(RECONNECT_TIMEOUT);
-
+    SCLogInfo("MA QUI CI PASSOOOO MAIIIII==??????");
     int if_flags = GetIfaceFlags(ptv->iface);
     if (if_flags == -1) {
         SCLogDebug("Couldn't get flags for interface '%s'", ptv->iface);
@@ -531,7 +532,7 @@ static TmEcode AFXDPTryReopen(AFXDPThreadVars *ptv)
         goto sock_err;
     }
 
-    if (AFXDPSocketCreation(ptv) != TM_ECODE_OK) {
+    if (AFXDPSocketCreation(ptv,0) != TM_ECODE_OK) {
         SCReturnInt(TM_ECODE_FAILED);
     }
 
@@ -689,6 +690,12 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
         SCLogError("ERR: loading program: %s\n", errmsg);
         SCReturnInt(TM_ECODE_FAILED);
     }
+    err = xdp_program__set_run_prio(prog,15);
+    if (err){
+        libxdp_strerror(err, errmsg, sizeof(errmsg));
+        SCLogError("ERR: prio set up program: %s\n", errmsg);
+        SCReturnInt(TM_ECODE_FAILED);
+    }
     err = xdp_program__attach(prog, ptv->ifindex, afxdpconfig->mode, 0);
     if (err){
         libxdp_strerror(err, errmsg, sizeof(errmsg));
@@ -707,12 +714,12 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
     }
     SCLogInfo("MAP ma non so a cosa serve? xsk_map_fd %d\n",xsk_map_fd);
     /* Reserve memory for umem  */
-    if (AcquireBuffer(ptv) != TM_ECODE_OK) {
+    if ((ptv) != TM_ECODE_OK) {
         SCFree(ptv);
         SCReturnInt(TM_ECODE_FAILED);
     }
 
-    if (AFXDPSocketCreation(ptv) != TM_ECODE_OK) {
+    if (AFXDPSocketCreation(ptv,xsk_map_fd) != TM_ECODE_OK) {
         ReceiveAFXDPThreadDeinit(tv, ptv);
         SCReturnInt(TM_ECODE_FAILED);
     }

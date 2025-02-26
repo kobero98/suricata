@@ -184,7 +184,7 @@ static void *ParseAFXDPConfig(const char *iface)
     aconf->gro_flush_timeout = DEFAULT_GRO_FLUSH_TIMEOUT;
     aconf->napi_defer_hard_irqs = DEFAULT_NAPI_HARD_IRQS;
     aconf->mem_alignment = XSK_UMEM__DEFAULT_FLAGS;
-    SCLogInfo("Sto iniziando a parsare la conf\n");
+    
     /* Find initial node */
     af_xdp_node = ConfGetNode("af-xdp");
     if (af_xdp_node == NULL) {
