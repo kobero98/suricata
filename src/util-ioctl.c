@@ -727,6 +727,7 @@ int GetIfaceRSSQueuesNum(const char *dev)
         if (errno != ENOTSUP) {
             SCLogWarning("%s: failed get number of RSS queue ioctl: %s", dev, strerror(errno));
         }
+        SCLogInfo("Sto in questo caso\n");
         close(fd);
         return 0;
     }
@@ -734,6 +735,7 @@ int GetIfaceRSSQueuesNum(const char *dev)
     SCLogInfo("%s: RX RSS queues: %d", dev, (int)nfccmd.data);
     return (int)nfccmd.data;
 #else
+    SCLogInfo("Vado qua?\n");
     return 0;
 #endif
 }
