@@ -303,7 +303,7 @@ static void AFXDPAllThreadsRunning(AFXDPThreadVars *ptv)
     SCMutexUnlock(&xsk_protect.queue_protect);
 }
 
-static TmEcode AcquireBuffer(AFXDPThreadVars *ptv,int xsk_map_fd)
+static TmEcode AcquireBuffer(AFXDPThreadVars *ptv)
 {
     int mmap_flags = MAP_PRIVATE | MAP_ANONYMOUS | ptv->umem.mmap_alignment_flag;
     ptv->umem.buf = mmap(NULL, MEM_BYTES, PROT_READ | PROT_WRITE, mmap_flags, -1, 0);
@@ -672,8 +672,7 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
     ptv->capture_afxdp_poll_failed = StatsRegisterCounter("capture.afxdp.poll_failed", ptv->tv);
     ptv->capture_afxdp_empty_reads = StatsRegisterCounter("capture.afxdp.empty_reads", ptv->tv);
     ptv->capture_afxdp_failed_reads = StatsRegisterCounter("capture.afxdp.failed_reads", ptv->tv);
-    ptv->capture_afxdp_acquire_pkt_failed =
-            StatsRegisterCounter("capture.afxdp.acquire_pkt_failed", ptv->tv);
+    ptv->capture_afxdp_acquire_pkt_failed =StatsRegisterCounter("capture.afxdp.acquire_pkt_failed", ptv->tv);
 
 
     DECLARE_LIBBPF_OPTS(bpf_object_open_opts, opts);
@@ -714,7 +713,7 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
     }
     SCLogInfo("MAP ma non so a cosa serve? xsk_map_fd %d\n",xsk_map_fd);
     /* Reserve memory for umem  */
-    if ((ptv) != TM_ECODE_OK) {
+    if (AcquireBuffer(ptv) != TM_ECODE_OK) {
         SCFree(ptv);
         SCReturnInt(TM_ECODE_FAILED);
     }
