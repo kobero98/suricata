@@ -689,7 +689,6 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
         SCLogError("ERR: loading program: %s\n", errmsg);
         SCReturnInt(TM_ECODE_FAILED);
     }
-    SCLogInfo("Program Loading:\n \tid:%d\n\tprog name:%s\n\tfind path:%s",xdp_opts.id,xdp_opts.prog_name,xdp_opts.find_filename);
     err = xdp_program__attach(prog, ptv->ifindex, afxdpconfig->mode, 0);
     if (err){
         libxdp_strerror(err, errmsg, sizeof(errmsg));
@@ -697,6 +696,8 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
         SCReturnInt(TM_ECODE_FAILED);
     }
     SCLogInfo("Program attach\n");
+    SCLogInfo("Program Loading:\n \tid:%d\n\tprog name:%s\n\tfind path:%s",xdp_opts.id,xdp_opts.prog_name,xdp_opts.find_filename);
+
     /* We also need to load the xsks_map */
     map = bpf_object__find_map_by_name(xdp_program__bpf_obj(prog), "xsks_map");
     int xsk_map_fd = bpf_map__fd(map);
