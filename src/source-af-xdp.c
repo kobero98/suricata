@@ -689,7 +689,7 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
         SCLogError("ERR: loading program: %s\n", errmsg);
         SCReturnInt(TM_ECODE_FAILED);
     }
-    SCLogInfo("Program Loading: id");
+    SCLogInfo("Program Loading:\n \tid:%d\n\tprog name:%s\n\tfind path:%s",xdp_opts.id,xdp_opts.prog_name,xdp_opts.find_filename);
     err = xdp_program__attach(prog, ptv->ifindex, afxdpconfig->mode, 0);
     if (err){
         libxdp_strerror(err, errmsg, sizeof(errmsg));
