@@ -487,7 +487,7 @@ static TmEcode AFXDPSocketCreation(AFXDPThreadVars *ptv,int xsk_map_fd)
     }
 
     /* Open AF_XDP socket */
-    if (OpenXSKSocket(ptv,xsk_map_fd,int xsk_map_fd) != TM_ECODE_OK) {
+    if (OpenXSKSocket(ptv,xsk_map_fd,xsk_map_fd) != TM_ECODE_OK) {
         SCReturnInt(TM_ECODE_FAILED);
     }
 
