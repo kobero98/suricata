@@ -696,7 +696,7 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
         SCReturnInt(TM_ECODE_FAILED);
     }
     SCLogInfo("Program attach\n");
-    SCLogInfo("Program Loading:\n \tid:%d\n\tprog name:%s\n\tfind path:%s",xdp_opts.id,xdp_opts.prog_name,xdp_opts.find_filename);
+    SCLogInfo("Program:\n \tid:%d\n\tprog name:%s\n\tfind path:%s",xdp_opts.id,xdp_opts.prog_name,xdp_opts.find_filename);
 
     /* We also need to load the xsks_map */
     map = bpf_object__find_map_by_name(xdp_program__bpf_obj(prog), "xsks_map");
@@ -705,7 +705,7 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
         SCLogError("ERR: MAP\n");
         SCReturnInt(TM_ECODE_FAILED);
     }
-    SCLogInfo("MAP ma non so a cosa serve\n");
+    SCLogInfo("MAP ma non so a cosa serve? xsk_map_fd %d\n",xsk_map_fd);
     /* Reserve memory for umem  */
     if (AcquireBuffer(ptv) != TM_ECODE_OK) {
         SCFree(ptv);
