@@ -725,7 +725,7 @@ int GetIfaceRSSQueuesNum(const char *dev)
 
     if (ioctl(fd, SIOCETHTOOL, (char *)&ifr) < 0) {
         if (errno != ENOTSUP) {
-            SCLogWarning("%s: failed get number of RSS queue ioctl: %s", dev, strerror(errno));
+            SCLogInfo("%s: failed get number of RSS queue ioctl: %s", dev, strerror(errno));
         }
         SCLogInfo("Sto in questo caso\n");
         close(fd);
