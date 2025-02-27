@@ -221,6 +221,7 @@ static inline uint32_t FlowGetHash(const Packet *p)
             fhk.vlan_id[0] = p->vlan_id[0] & g_vlan_mask;
             fhk.vlan_id[1] = p->vlan_id[1] & g_vlan_mask;
             fhk.vlan_id[2] = p->vlan_id[2] & g_vlan_mask;
+            SCLogInfo("%d %d %d",fhk.vlan_id[0],fhk.vlan_id[1],fhk.vlan_id[2]);
 
             hash = hashword(fhk.u32, ARRAY_SIZE(fhk.u32), flow_config.hash_rand);
 
