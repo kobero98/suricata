@@ -734,6 +734,7 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
 
 struct meta_info {
 	__u32 src_ip;
+    __u32 hash;
 };
 
 static TmEcode ReceiveAFXDPLoop(ThreadVars *tv, void *data, void *slot)
@@ -849,13 +850,14 @@ static TmEcode ReceiveAFXDPLoop(ThreadVars *tv, void *data, void *slot)
             struct meta_info *meta = (void *)(pkt_data - sizeof(struct meta_info));
             // Estraiamo l’IP sorgente
 		    __u32 ip = meta->src_ip;
+            __u32 hash = meta->hash;
             if (ip != 0) {
                 // Convertiamo in dotted-decimal e stampiamo
                 struct in_addr in;
                 in.s_addr = ip;  // network order
                 char ip_str[INET_ADDRSTRLEN] = {0};
                 inet_ntop(AF_INET, &in, ip_str, sizeof(ip_str));
-                SCLogInfo(">>> Received packet (len=%u), metadata src_ip=%s\n",len, ip_str);
+                SCLogInfo(">>> Received packet (len=%u), metadata src_ip=%s hash:%d\n",len, ip_str,hash);
 		    }else{
                 SCLogInfo("not received");
             }
@@ -864,7 +866,7 @@ static TmEcode ReceiveAFXDPLoop(ThreadVars *tv, void *data, void *slot)
             p->afxdp_v.fq_idx = idx_fq++;
             p->afxdp_v.orig = orig;
             p->afxdp_v.fq = &ptv->umem.fq;
-
+            p->hash = hash;
             PacketSetData(p, pkt_data, len);
 
             if (TmThreadsSlotProcessPkt(ptv->tv, ptv->slot, p) != TM_ECODE_OK) {
