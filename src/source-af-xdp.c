@@ -866,7 +866,7 @@ static TmEcode ReceiveAFXDPLoop(ThreadVars *tv, void *data, void *slot)
             p->afxdp_v.fq_idx = idx_fq++;
             p->afxdp_v.orig = orig;
             p->afxdp_v.fq = &ptv->umem.fq;
-            p->hash = hash;
+            p->flow_hash = hash;
             PacketSetData(p, pkt_data, len);
 
             if (TmThreadsSlotProcessPkt(ptv->tv, ptv->slot, p) != TM_ECODE_OK) {
