@@ -222,7 +222,7 @@ static inline uint32_t FlowGetHash(const Packet *p)
             fhk.vlan_id[1] = p->vlan_id[1] & g_vlan_mask;
             fhk.vlan_id[2] = p->vlan_id[2] & g_vlan_mask;
             SCLogInfo("%d %d %d",fhk.vlan_id[0],fhk.vlan_id[1],fhk.vlan_id[2]);
-
+            SCLogInfo("length %ld ",ARRAY_SIZE(fhk.u32));
             hash = hashword(fhk.u32, ARRAY_SIZE(fhk.u32),flow_config.hash_rand);
             SCLogInfo("calcolato da suri: %" PRIu32 " forse",hash);
         } else if (ICMPV4_DEST_UNREACH_IS_VALID(p)) {
