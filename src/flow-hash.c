@@ -227,6 +227,7 @@ static inline uint32_t FlowGetHash(const Packet *p)
             SCLogInfo("protocol:%d",fhk.proto);
             SCLogInfo("recursion:%d",fhk.recur);
             SCLogInfo("livedev:%d",fhk.livedev);
+            SCLogInfo("random Value:%d",flow_config.hash_rand);
             SCLogInfo("%d %d %d",fhk.vlan_id[0],fhk.vlan_id[1],fhk.vlan_id[2]);
             SCLogInfo("length %ld ",ARRAY_SIZE(fhk.u32));
             hash = hashword(fhk.u32, ARRAY_SIZE(fhk.u32),flow_config.hash_rand);
