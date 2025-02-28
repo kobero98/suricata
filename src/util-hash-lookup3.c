@@ -178,7 +178,7 @@ uint32_t        initval)         /* the previous hash, or an arbitrary value */
 
   /* Set up the internal state */
   a = b = c = 0xdeadbeef + (((uint32_t)length)<<2) + initval;
-
+  SCLogInfo("length %ld ",length);
   /*------------------------------------------------- handle most of the key */
   while (length > 3)
   {
