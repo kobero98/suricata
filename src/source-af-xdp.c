@@ -857,7 +857,7 @@ static TmEcode ReceiveAFXDPLoop(ThreadVars *tv, void *data, void *slot)
                 in.s_addr = ip;  // network order
                 char ip_str[INET_ADDRSTRLEN] = {0};
                 inet_ntop(AF_INET, &in, ip_str, sizeof(ip_str));
-                SCLogInfo(">>> Received packet (len=%u), metadata src_ip=%s hash:%d\n",len, ip_str,hash);
+                SCLogInfo(">>> Received packet (len=%u), metadata src_ip=%s hash: %" PRIu32 "\n",len, ip_str,hash);
 		    }else{
                 SCLogInfo("not received");
             }
