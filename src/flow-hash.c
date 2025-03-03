@@ -230,7 +230,7 @@ static inline uint32_t FlowGetHash(const Packet *p)
             SCLogInfo("random Value:%d",flow_config.hash_rand);
             SCLogInfo("%d %d %d",fhk.vlan_id[0],fhk.vlan_id[1],fhk.vlan_id[2]);
             SCLogInfo("length %ld ",ARRAY_SIZE(fhk.u32));
-            hash = hashword(fhk.u32, ARRAY_SIZE(fhk.u32), 0x12345678);//flow_config.hash_rand);
+            hash = hashword(fhk.u32, ARRAY_SIZE(fhk.u32), flow_config.hash_rand);
             SCLogInfo("calcolato da suri: %" PRIu32 " forse",hash);
         } else if (ICMPV4_DEST_UNREACH_IS_VALID(p)) {
             uint32_t psrc = IPV4_GET_RAW_IPSRC_U32(PacketGetICMPv4EmbIPv4(p));
@@ -305,7 +305,7 @@ static inline uint32_t FlowGetHash(const Packet *p)
         fhk.vlan_id[1] = p->vlan_id[1] & g_vlan_mask;
         fhk.vlan_id[2] = p->vlan_id[2] & g_vlan_mask;
 
-        hash = hashword(fhk.u32, ARRAY_SIZE(fhk.u32), flow_config.hash_rand);
+        hash = hashword(fhk.u32, ARRAY_SIZE(fhk.u32),flow_config.hash_rand);
     }
 
     return hash;
@@ -541,8 +541,8 @@ static inline int FlowCompareESP(Flow *f, const Packet *p)
 void FlowSetupPacket(Packet *p)
 {
     p->flags |= PKT_WANTS_FLOW;
-    //if(p->flow_hash == 0) 
-    p->flow_hash = FlowGetHash(p);
+    //if(p->flow_hash == 0)  //SCOMMENTARE PER ASSEGNARE FLUSSO
+        p->flow_hash = FlowGetHash(p);
 }
 
 static inline int FlowCompare(Flow *f, const Packet *p)

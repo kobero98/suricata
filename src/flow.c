@@ -527,7 +527,7 @@ void FlowInitConfig(bool quiet)
     FlowQueueInit(&flow_recycle_q);
 
     /* set defaults */
-    flow_config.hash_rand   = (uint32_t)RandomGet();
+    flow_config.hash_rand   = 0x12345678;//(uint32_t)RandomGet();
     flow_config.hash_size   = FLOW_DEFAULT_HASHSIZE;
     flow_config.prealloc    = FLOW_DEFAULT_PREALLOC;
     SC_ATOMIC_SET(flow_config.memcap, FLOW_DEFAULT_MEMCAP);
