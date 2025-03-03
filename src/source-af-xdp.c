@@ -452,7 +452,7 @@ static TmEcode OpenXSKSocket(AFXDPThreadVars *ptv,int xsk_map_fd)
     ptv->xsk.fd.fd = xsk_socket__fd(ptv->xsk.xsk);
     ptv->xsk.fd.events = POLLIN;
     ret = xsk_socket__update_xskmap(ptv->xsk.xsk, xsk_map_fd);
-		if (ret) SCLogInfo("updare Error \n");
+	if (ret) SCLogInfo("updare Error \n");
     /* Set state */
     AFXDPSwitchState(ptv, AFXDP_STATE_UP);
 

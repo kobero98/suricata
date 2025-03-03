@@ -371,7 +371,7 @@ int RunModeIdsAFXDPWorkers(void)
 
     if (AFXDPQueueProtectionInit() != TM_ECODE_OK) {
         FatalError("Unable to init AF_XDP queue protection.");
-    }
+    }        
 
     ret = RunModeSetLiveCaptureWorkers(ParseAFXDPConfig, AFXDPConfigGetThreadsCount, "ReceiveAFXDP",
             "DecodeAFXDP", thread_name_workers, live_dev);

@@ -541,7 +541,7 @@ static inline int FlowCompareESP(Flow *f, const Packet *p)
 void FlowSetupPacket(Packet *p)
 {
     p->flags |= PKT_WANTS_FLOW;
-    //if(p->flow_hash == 0)  //SCOMMENTARE PER ASSEGNARE FLUSSO
+    if(p->flow_hash == 0)  //SCOMMENTARE PER ASSEGNARE FLUSSO
         p->flow_hash = FlowGetHash(p);
 }
 
