@@ -184,7 +184,7 @@ static void *ParseAFXDPConfig(const char *iface)
     aconf->gro_flush_timeout = DEFAULT_GRO_FLUSH_TIMEOUT;
     aconf->napi_defer_hard_irqs = DEFAULT_NAPI_HARD_IRQS;
     aconf->mem_alignment = XSK_UMEM__DEFAULT_FLAGS;
-    
+    aconf->enable_Accelerator = 0;
     /* Find initial node */
     af_xdp_node = ConfGetNode("af-xdp");
     if (af_xdp_node == NULL) {
@@ -238,6 +238,14 @@ static void *ParseAFXDPConfig(const char *iface)
         } else if (strncasecmp(confstr, "none", 4) == 0) {
         } else {
             SCLogWarning("Incorrect af-xdp xdp-mode setting, default (none) shall be applied");
+        }
+    }
+
+
+    //nostro codice e parametro
+    if (ConfGetChildValueWithDefault(if_root, if_default, "accelerator-mode", &confstr) == 1) {
+        if (strncasecmp(confstr, "yes", 3) == 0) {
+            aconf->accelerator = 1;
         }
     }
 

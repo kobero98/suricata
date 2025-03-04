@@ -673,45 +673,47 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
     ptv->capture_afxdp_empty_reads = StatsRegisterCounter("capture.afxdp.empty_reads", ptv->tv);
     ptv->capture_afxdp_failed_reads = StatsRegisterCounter("capture.afxdp.failed_reads", ptv->tv);
     ptv->capture_afxdp_acquire_pkt_failed =StatsRegisterCounter("capture.afxdp.acquire_pkt_failed", ptv->tv);
+    
+    int xsk_map_fd = 0;
+    if(afxdpconfig->enable_Accelerator){
+        DECLARE_LIBBPF_OPTS(bpf_object_open_opts, opts);
+        DECLARE_LIBXDP_OPTS(xdp_program_opts, xdp_opts, 0);
+        struct bpf_map *map;
+        xdp_opts.open_filename = "/home/kobero/evalNet/xdp-tutorial/af_xdp_meta/xdp_prog_kern.o";
+        xdp_opts.opts = &opts;
+        struct xdp_program* prog = xdp_program__open_file("/home/kobero/evalNet/xdp-tutorial/af_xdp_meta/xdp_prog_kern.o",NULL, &opts);
+        int err = libxdp_get_error(prog);
+        char errmsg[1024];
+        SCLogInfo("mode: %d",afxdpconfig->mode);
+        if (err) {
+            libxdp_strerror(err, errmsg, sizeof(errmsg));
+            SCLogError("ERR: loading program: %s\n", errmsg);
+            SCReturnInt(TM_ECODE_FAILED);
+        }
+        err = xdp_program__set_run_prio(prog,15);
+        if (err){
+            libxdp_strerror(err, errmsg, sizeof(errmsg));
+            SCLogError("ERR: prio set up program: %s\n", errmsg);
+            SCReturnInt(TM_ECODE_FAILED);
+        }
+        err = xdp_program__attach(prog, ptv->ifindex, afxdpconfig->mode, 0);
+        if (err){
+            libxdp_strerror(err, errmsg, sizeof(errmsg));
+            SCLogError("ERR: Attach program: %s\n", errmsg);
+            SCReturnInt(TM_ECODE_FAILED);
+        }
+        SCLogInfo("Program attach\n");
+        SCLogInfo("Program:\n \tid:%d\n\tprog name:%s\n\tfind path:%s",xdp_opts.id,xdp_opts.prog_name,xdp_opts.find_filename);
 
-
-    DECLARE_LIBBPF_OPTS(bpf_object_open_opts, opts);
-    DECLARE_LIBXDP_OPTS(xdp_program_opts, xdp_opts, 0);
-    struct bpf_map *map;
-    xdp_opts.open_filename = "/home/kobero/evalNet/xdp-tutorial/af_xdp_meta/xdp_prog_kern.o";
-    xdp_opts.opts = &opts;
-    struct xdp_program* prog = xdp_program__open_file("/home/kobero/evalNet/xdp-tutorial/af_xdp_meta/xdp_prog_kern.o",NULL, &opts);
-    int err = libxdp_get_error(prog);
-    char errmsg[1024];
-    SCLogInfo("mode: %d",afxdpconfig->mode);
-    if (err) {
-        libxdp_strerror(err, errmsg, sizeof(errmsg));
-        SCLogError("ERR: loading program: %s\n", errmsg);
-        SCReturnInt(TM_ECODE_FAILED);
+        /* We also need to load the xsks_map */
+        map = bpf_object__find_map_by_name(xdp_program__bpf_obj(prog), "xsks_map");
+        xsk_map_fd = bpf_map__fd(map);
+        if (xsk_map_fd < 0) {
+            SCLogError("ERR: MAP\n");
+            SCReturnInt(TM_ECODE_FAILED);
+        }
+        SCLogInfo("MAP ma non so a cosa serve? xsk_map_fd %d\n",xsk_map_fd);
     }
-    err = xdp_program__set_run_prio(prog,15);
-    if (err){
-        libxdp_strerror(err, errmsg, sizeof(errmsg));
-        SCLogError("ERR: prio set up program: %s\n", errmsg);
-        SCReturnInt(TM_ECODE_FAILED);
-    }
-    err = xdp_program__attach(prog, ptv->ifindex, afxdpconfig->mode, 0);
-    if (err){
-        libxdp_strerror(err, errmsg, sizeof(errmsg));
-        SCLogError("ERR: Attach program: %s\n", errmsg);
-        SCReturnInt(TM_ECODE_FAILED);
-    }
-    SCLogInfo("Program attach\n");
-    SCLogInfo("Program:\n \tid:%d\n\tprog name:%s\n\tfind path:%s",xdp_opts.id,xdp_opts.prog_name,xdp_opts.find_filename);
-
-    /* We also need to load the xsks_map */
-    map = bpf_object__find_map_by_name(xdp_program__bpf_obj(prog), "xsks_map");
-    int xsk_map_fd = bpf_map__fd(map);
-    if (xsk_map_fd < 0) {
-        SCLogError("ERR: MAP\n");
-        SCReturnInt(TM_ECODE_FAILED);
-    }
-    SCLogInfo("MAP ma non so a cosa serve? xsk_map_fd %d\n",xsk_map_fd);
     /* Reserve memory for umem  */
     if (AcquireBuffer(ptv) != TM_ECODE_OK) {
         SCFree(ptv);
@@ -847,7 +849,7 @@ static TmEcode ReceiveAFXDPLoop(ThreadVars *tv, void *data, void *slot)
 
             uint8_t *pkt_data = xsk_umem__get_data(ptv->umem.buf, addr);
             SCLogInfo("Packet %s",pkt_data);
-            struct meta_info *meta = (void *)(pkt_data - sizeof(struct meta_info));
+            struct meta_info * meta = (void *)(pkt_data - sizeof(struct meta_info));
             // Estraiamo l’IP sorgente
 		    __u32 ip = meta->src_ip;
             __u32 hash = meta->hash;
@@ -868,7 +870,6 @@ static TmEcode ReceiveAFXDPLoop(ThreadVars *tv, void *data, void *slot)
             p->afxdp_v.fq = &ptv->umem.fq;
             p->flow_hash = hash;
             PacketSetData(p, pkt_data, len);
-
             if (TmThreadsSlotProcessPkt(ptv->tv, ptv->slot, p) != TM_ECODE_OK) {
                 TmqhOutputPacketpool(ptv->tv, p);
                 SCReturnInt(EXIT_FAILURE);
