@@ -245,7 +245,7 @@ static void *ParseAFXDPConfig(const char *iface)
     //nostro codice e parametro
     if (ConfGetChildValueWithDefault(if_root, if_default, "accelerator-mode", &confstr) == 1) {
         if (strncasecmp(confstr, "yes", 3) == 0) {
-            aconf->accelerator = 1;
+            aconf->enable_Accelerator = 1;
         }
     }
 
