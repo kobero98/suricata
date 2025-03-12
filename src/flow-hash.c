@@ -221,17 +221,8 @@ static inline uint32_t FlowGetHash(const Packet *p)
             fhk.vlan_id[0] = p->vlan_id[0] & g_vlan_mask;
             fhk.vlan_id[1] = p->vlan_id[1] & g_vlan_mask;
             fhk.vlan_id[2] = p->vlan_id[2] & g_vlan_mask;
-            SCLogInfo("ALL INFO of FHK");
-            SCLogInfo("addr[0]:%d \t addr[1]:%d",fhk.addrs[0],fhk.addrs[1]);
-            SCLogInfo("port[0]:%d \t port[1]:%d",fhk.ports[0],fhk.ports[1]);
-            SCLogInfo("protocol:%d",fhk.proto);
-            SCLogInfo("recursion:%d",fhk.recur);
-            SCLogInfo("livedev:%d",fhk.livedev);
-            SCLogInfo("random Value:%d",flow_config.hash_rand);
-            SCLogInfo("%d %d %d",fhk.vlan_id[0],fhk.vlan_id[1],fhk.vlan_id[2]);
-            SCLogInfo("length %ld ",ARRAY_SIZE(fhk.u32));
+    
             hash = hashword(fhk.u32, ARRAY_SIZE(fhk.u32), flow_config.hash_rand);
-            SCLogInfo("calcolato da suri: %" PRIu32 " forse",hash);
         } else if (ICMPV4_DEST_UNREACH_IS_VALID(p)) {
             uint32_t psrc = IPV4_GET_RAW_IPSRC_U32(PacketGetICMPv4EmbIPv4(p));
             uint32_t pdst = IPV4_GET_RAW_IPDST_U32(PacketGetICMPv4EmbIPv4(p));

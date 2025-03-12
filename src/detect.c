@@ -134,7 +134,6 @@ static void DetectRun(ThreadVars *th_v,
         goto end;
     }
 
-
     /* run the prefilters for packets */
     DetectRunPrefilterPkt(th_v, de_ctx, det_ctx, p, &scratch);
     /* mi manca da capire sto detectRunPrefilterPkt ????
@@ -169,6 +168,7 @@ static void DetectRun(ThreadVars *th_v,
                 goto end;
             }
         } else if (p->proto == IPPROTO_UDP) {
+            SCLogInfo("QUA?");
             DetectRunFrames(th_v, de_ctx, det_ctx, p, pflow, &scratch);
         }
 
@@ -1161,6 +1161,7 @@ static bool DetectRunTxInspectRule(ThreadVars *tv,
             TRACE_SID_TXS(s->id, tx, "DetectEnginePktInspectionRun no match");
             return false;
         }
+        SCLogInfo("Ma può esse che matcho quaa???");
         /* stream mpm and negated mpm sigs can end up here with wrong proto */
         if (!(AppProtoEquals(s->alproto, f->alproto) || s->alproto == ALPROTO_UNKNOWN)) {
             TRACE_SID_TXS(s->id, tx, "alproto mismatch");

@@ -1984,8 +1984,6 @@ bool DetectEnginePktInspectionRun(ThreadVars *tv,
         }
         SCLogDebug("sid %u: e %p Callback returned true", s->id, e);
     }
-
-    SCLogInfo("sid %u: returning true", s->id);
     return true;
 }
 
