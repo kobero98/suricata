@@ -749,7 +749,7 @@ static bool IsOnlyTxInDirection(Flow *f, uint64_t txid, uint8_t dir)
 }
 
 static inline void DetectRulePacketRules(
-    ThreadVars * const tv,
+    ThreadVars * tv,
     DetectEngineCtx * const de_ctx,
     DetectEngineThreadCtx * const det_ctx,
     Packet * const p,
