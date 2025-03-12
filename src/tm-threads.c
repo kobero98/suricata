@@ -1591,20 +1591,23 @@ static void TmThreadFree(ThreadVars *tv)
         return;
 
     SCLogDebug("Freeing thread '%s'.", tv->name);
-    SCLogInfo("Final Statistic:");
-    SCLogInfo("IP RULES STATS: %d, %d, %d",
-            tv->statskob.ipRules.TotalRuleOnlyIP/tv->statskob.packet_total,
-            tv->statskob.ipRules.TotalRuleOnlyIP/tv->statskob.packet_total,
-            tv->statskob.ipRules.TotalRuleMatch/tv->statskob.packet_total
-        );
-    SCLogInfo("OTHER RULES STATS: %d, %d, %d, %d, %d",
-            tv->statskob.smpRules.beforeRulesInspectHeader/tv->statskob.packet_total,
-            tv->statskob.smpRules.beforeRulesPktInspection/tv->statskob.packet_total,
-            tv->statskob.smpRules.totalRulesAfterFilter/tv->statskob.packet_total,
-            tv->statskob.smpRules.totalRules/tv->statskob.packet_total,
-            tv->statskob.smpRules.totalRulesMatched/tv->statskob.packet_total
-        );
-
+    
+        SCLogInfo("Final Statistic:");
+        SCLogInfo("Total_packet: %d",tv->statskob.packet_total);
+    if(tv->statskob.packet_total>0){   
+        SCLogInfo("IP RULES STATS: %d, %d, %d",
+                tv->statskob.ipRules.TotalRuleOnlyIP/tv->statskob.packet_total,
+                tv->statskob.ipRules.TotalRuleOnlyIP/tv->statskob.packet_total,
+                tv->statskob.ipRules.TotalRuleMatch/tv->statskob.packet_total
+            );
+        SCLogInfo("OTHER RULES STATS: %d, %d, %d, %d, %d",
+                tv->statskob.smpRules.beforeRulesInspectHeader/tv->statskob.packet_total,
+                tv->statskob.smpRules.beforeRulesPktInspection/tv->statskob.packet_total,
+                tv->statskob.smpRules.totalRulesAfterFilter/tv->statskob.packet_total,
+                tv->statskob.smpRules.totalRules/tv->statskob.packet_total,
+                tv->statskob.smpRules.totalRulesMatched/tv->statskob.packet_total
+            );
+    }
     ThreadFreeStorage(tv);
 
     if (tv->flow_queue) {
