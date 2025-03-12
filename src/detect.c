@@ -787,7 +787,7 @@ static inline void DetectRulePacketRules(
 #ifdef PROFILE_RULES
         bool smatch = false; /* signature match */
 #endif
-        th_v->statskob.totalRulesAfterFilter++;
+        tv->statskob.totalRulesAfterFilter++;
         const Signature *s = next_s;
         sflags = next_sflags;
         if (match_cnt) {
@@ -827,15 +827,15 @@ static inline void DetectRulePacketRules(
             }
         }
         
-        th_v->statskob.beforeRulesInspectHeader++;
+        tv->statskob.beforeRulesInspectHeader++;
         if (DetectRunInspectRuleHeader(p, pflow, s, sflags, s_proto_flags) == false) {
             goto next;
         }
-        th_v->statskob.beforeRulesPktInspection++;
+        tv->statskob.beforeRulesPktInspection++;
         if (DetectEnginePktInspectionRun(tv, det_ctx, s, pflow, p, &alert_flags) == false) {
             goto next;
         }
-        th_v->statskob.totalRulesMatched++;
+        tv->statskob.totalRulesMatched++;
 
 #ifdef PROFILE_RULES
         smatch = true;
