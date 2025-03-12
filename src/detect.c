@@ -787,7 +787,7 @@ static inline void DetectRulePacketRules(
 #ifdef PROFILE_RULES
         bool smatch = false; /* signature match */
 #endif
-        tv->statskob.smpRules.totalRulesAfterFilter++;
+        tv->statskob.smpRules.totalRulesAfterFilter=tv->statskob.smpRules.totalRulesAfterFilter+1;
         const Signature *s = next_s;
         sflags = next_sflags;
         if (match_cnt) {
@@ -827,19 +827,20 @@ static inline void DetectRulePacketRules(
             }
         }
         
-        tv->statskob.smpRules.beforeRulesInspectHeader++;
+        tv->statskob.smpRules.beforeRulesInspectHeader= tv->statskob.smpRules.beforeRulesInspectHeader+1;
         if (DetectRunInspectRuleHeader(p, pflow, s, sflags, s_proto_flags) == false) {
             goto next;
         }
-        tv->statskob.smpRules.beforeRulesPktInspection++;
+        tv->statskob.smpRules.beforeRulesPktInspection=tv->statskob.smpRules.beforeRulesPktInspection+1;
         if (DetectEnginePktInspectionRun(tv, det_ctx, s, pflow, p, &alert_flags) == false) {
             goto next;
         }
-        tv->statskob.smpRules.totalRulesMatched++;
+        tv->statskob.smpRules.totalRulesMatched=tv->statskob.smpRules.totalRulesMatched+1;
 
 #ifdef PROFILE_RULES
         smatch = true;
 #endif
+        SCLogInfo("Match trovato");
         DetectRunPostMatch(tv, det_ctx, p, s);
 
         uint64_t txid = PACKET_ALERT_NOTX;
@@ -1892,7 +1893,7 @@ static void DetectNoFlow(ThreadVars *tv,
  *  \retval TM_ECODE_FAILED error
  *  \retval TM_ECODE_OK ok
  */
-TmEcode Detect(ThreadVars *tv, Packet *p, void *data)
+TmEcode ThreadVars *tv, Packet *p, void *data)
 {
     DEBUG_VALIDATE_PACKET(p);
 
