@@ -73,7 +73,7 @@ typedef struct statsDetectRunFrames{
     int matchFrame;
 }statsDetectRunFrames;
 typedef struct statsDetectRunTX{
-
+    int boh;
 }statsDetectRunTX;
 typedef struct statsMatt{
     int packet_total;
