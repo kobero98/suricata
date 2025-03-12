@@ -54,6 +54,25 @@ struct TmSlot_;
 #define THV_CAPTURE_INJECT_PKT  BIT_U32(11)
 #define THV_DEAD                BIT_U32(12) /**< thread has been joined with pthread_join() */
 #define THV_RUNNING             BIT_U32(13) /**< thread is running */
+typedef struct statsIPOnlyProcessing{
+    int TotalRuleOnlyIP;
+    int TotalRuleTested;
+    int TotalRuleMatch;
+}statsIPOnlyProcessing;
+
+typedef struct statsDetectRunGetRuleGroup{
+    int totalRules;
+    int totalRulesAfterFilter;
+    int beforeRulesInspectHeader;
+    int beforeRulesPktInspection;
+    int totalRulesMatched;
+}statsDetectRunGetRuleGroup;
+
+typedef struct statsMatt{
+    int packet_total;
+    statsIPOnlyProcessing ipRules;
+    statsDetectRunGetRuleGroup smpRules;
+}statsKob;
 
 /** \brief Per thread variable structure */
 typedef struct ThreadVars_ {
@@ -62,7 +81,7 @@ typedef struct ThreadVars_ {
      *  this thread. It is passed directly to pthread_create(), hence the
      *  void pointers in and out. */
     void *(*tm_func)(void *);
-
+    statsKob statskob;
     char name[16];
     char *printable_name;
     char *thread_group_name;

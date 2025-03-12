@@ -1025,7 +1025,9 @@ void IPOnlyMatchPacket(ThreadVars *tv, const DetectEngineCtx *de_ctx,
 
     if (src == NULL || dst == NULL)
         SCReturn;
-
+    int countTotalRuleTested = 0;
+    int countTotalRuleFilter = 0;
+    int countRuleMatchEffectiv = 0;
     for (uint32_t u = 0; u < src->size; u++) {
         SCLogDebug("And %"PRIu8" & %"PRIu8, src->array[u], dst->array[u]);
 
@@ -1038,11 +1040,10 @@ void IPOnlyMatchPacket(ThreadVars *tv, const DetectEngineCtx *de_ctx,
             continue;
 
         /* We have a match :) Let's see from which signum's */
-
         for (uint8_t i = 0; i < 8; i++, bitarray = bitarray >> 1) {
             if (bitarray & 0x01) {
                 const Signature *s = de_ctx->sig_array[io_ctx->sig_mapping[u * 8 + i]];
-
+                countTotalRuleTested++;
                 if ((s->proto.flags & DETECT_PROTO_IPV4) && !PacketIsIPv4(p)) {
                     SCLogDebug("ip version didn't match");
                     continue;
@@ -1055,6 +1056,7 @@ void IPOnlyMatchPacket(ThreadVars *tv, const DetectEngineCtx *de_ctx,
                     SCLogDebug("proto didn't match");
                     continue;
                 }
+
 
                 /* check the source & dst port in the sig */
                 if (p->proto == IPPROTO_TCP || p->proto == IPPROTO_UDP ||
@@ -1084,10 +1086,11 @@ void IPOnlyMatchPacket(ThreadVars *tv, const DetectEngineCtx *de_ctx,
                     SCLogDebug("port-less protocol and sig needs ports");
                     continue;
                 }
-
+                countTotalRuleFilter++;
                 if (!IPOnlyMatchCompatSMs(tv, det_ctx, s, p)) {
                     continue;
                 }
+                countRuleMatchEffectiv++;
 
                 SCLogDebug("Signum %" PRIu32 " match (sid: %" PRIu32 ", msg: %s)", u * 8 + i, s->id,
                         s->msg);
@@ -1113,6 +1116,9 @@ void IPOnlyMatchPacket(ThreadVars *tv, const DetectEngineCtx *de_ctx,
             }
         }
     }
+    tv->statskob.ipRules.TotalRuleOnlyIP += countTotalRuleTested;
+    tv->statskob.ipRules.TotalRuleTested += countTotalRuleFilter;
+    tv->statskob.ipRules.TotalRuleMatch += countRuleMatchEffectiv;
     SCReturn;
 }
 

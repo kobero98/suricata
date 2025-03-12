@@ -1012,7 +1012,18 @@ ThreadVars *TmThreadCreate(const char *name, const char *inq_name, const char *i
 
     if (mucond != 0)
         TmThreadInitMC(tv);
-
+    
+    //aggiunto da matteo
+    tv->statskob.packet_total=0;
+    tv->statskob.ipRules.TotalRuleMatch = 0;
+    tv->statskob.ipRules.TotalRuleOnlyIP = 0;
+    tv->statskob.ipRules.TotalRuleTested = 0;
+    tv->statskob.smpRules.beforeRulesInspectHeader = 0;
+    tv->statskob.smpRules.beforeRulesPktInspection = 0;
+    tv->statskob.smpRules.totalRules = 0;
+    tv->statskob.smpRules.totalRulesAfterFilter = 0;
+    tv->statskob.smpRules.totalRulesMatched = 0;
+    
     SCThreadRunInitCallbacks(tv);
 
     return tv;
@@ -1580,6 +1591,19 @@ static void TmThreadFree(ThreadVars *tv)
         return;
 
     SCLogDebug("Freeing thread '%s'.", tv->name);
+    SCLogInfo("Final Statistic:");
+    SCLogInfo("IP RULES STATS: %d, %d, %d",
+            tv->statskob.ipRules.TotalRuleOnlyIP/tv->statskob.packet_total,
+            tv->statskob.ipRules.TotalRuleOnlyIP/tv->statskob.packet_total,
+            tv->statskob.ipRules.TotalRuleMatch/tv->statskob.packet_total
+        );
+    SCLogInfo("OTHER RULES STATS: %d, %d, %d, %d, %d",
+            tv->statskob.smpRules.beforeRulesInspectHeader/tv->statskob.packet_total,
+            tv->statskob.smpRules.beforeRulesPktInspection/tv->statskob.packet_total,
+            tv->statskob.smpRules.totalRulesAfterFilter/tv->statskob.packet_total,
+            tv->statskob.smpRules.totalRules/tv->statskob.packet_total,
+            tv->statskob.smpRules.totalRulesMatched/tv->statskob.packet_total
+        );
 
     ThreadFreeStorage(tv);
 

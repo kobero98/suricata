@@ -109,7 +109,7 @@ static void DetectRun(ThreadVars *th_v,
             p->flow ? (FlowGetPacketDirection(p->flow, p) == TOSERVER ? "toserver" : "toclient")
                     : "noflow",
             PktSrcToString(p->pkt_src));
-
+    th_v->statskob.packet_total++;
     /* bail early if packet should not be inspected */
     if (p->flags & PKT_NOPACKET_INSPECTION) {
         /* nothing to do */
@@ -134,9 +134,11 @@ static void DetectRun(ThreadVars *th_v,
         goto end;
     }
 
+
     /* run the prefilters for packets */
     DetectRunPrefilterPkt(th_v, de_ctx, det_ctx, p, &scratch);
-
+    /* mi manca da capire sto detectRunPrefilterPkt ????
+       cosa sarebbe come fa a scremare le regole da provare???*/
     PACKET_PROFILING_DETECT_START(p, PROF_DETECT_RULES);
     /* inspect the rules against the packet */
     DetectRulePacketRules(th_v, de_ctx, det_ctx, p, pflow, &scratch);
@@ -280,7 +282,7 @@ static inline void DetectPrefilterMergeSort(DetectEngineCtx *de_ctx,
     Signature **match_array = det_ctx->match_array;
     Signature *s;
 
-    SCLogInfo("PMQ rule id array count %d", det_ctx->pmq.rule_id_array_cnt);
+    SCLogDebug("PMQ rule id array count %d", det_ctx->pmq.rule_id_array_cnt);
 
     /* Load first values. */
     if (likely(m_cnt)) {
@@ -785,6 +787,7 @@ static inline void DetectRulePacketRules(
 #ifdef PROFILE_RULES
         bool smatch = false; /* signature match */
 #endif
+        th_v->statskob.totalRulesAfterFilter++;
         const Signature *s = next_s;
         sflags = next_sflags;
         if (match_cnt) {
@@ -823,14 +826,16 @@ static inline void DetectRulePacketRules(
                 goto next;
             }
         }
-        SCLogInfo("%d %s",s->id,s->sig_str);
+        
+        th_v->statskob.beforeRulesInspectHeader++;
         if (DetectRunInspectRuleHeader(p, pflow, s, sflags, s_proto_flags) == false) {
             goto next;
         }
-        SCLogInfo("%d %s",s->id,s->sig_str);
+        th_v->statskob.beforeRulesPktInspection++;
         if (DetectEnginePktInspectionRun(tv, det_ctx, s, pflow, p, &alert_flags) == false) {
             goto next;
         }
+        th_v->statskob.totalRulesMatched++;
 
 #ifdef PROFILE_RULES
         smatch = true;
