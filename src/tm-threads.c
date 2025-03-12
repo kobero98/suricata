@@ -1018,12 +1018,21 @@ ThreadVars *TmThreadCreate(const char *name, const char *inq_name, const char *i
     tv->statskob.ipRules.TotalRuleMatch = 0;
     tv->statskob.ipRules.TotalRuleOnlyIP = 0;
     tv->statskob.ipRules.TotalRuleTested = 0;
+    
     tv->statskob.smpRules.beforeRulesInspectHeader = 0;
     tv->statskob.smpRules.beforeRulesPktInspection = 0;
     tv->statskob.smpRules.totalRules = 0;
     tv->statskob.smpRules.totalRulesAfterFilter = 0;
     tv->statskob.smpRules.totalRulesMatched = 0;
     
+    tv->statskob.runFrames.beforeRuleHeaderFrame = 0;
+    tv->statskob.runFrames.beforeRuleInspect = 0;
+    tv->statskob.runFrames.matchFrame = 0;
+    
+    tv->statskob.runTX.prefilterRule = 0;
+    tv->statskob.runTX.allrule = 0;
+    tv->statskob.runTX.matchTx = 0;
+
     SCThreadRunInitCallbacks(tv);
 
     return tv;
@@ -1603,7 +1612,7 @@ static void TmThreadFree(ThreadVars *tv)
                 ((float)tv->statskob.ipRules.TotalRuleTested)/tv->statskob.packet_total,
                 ((float)tv->statskob.ipRules.TotalRuleMatch)/tv->statskob.packet_total
             );
-        SCLogInfo("OTHER RULES STATS:\n\t beforeRulesInspectHeader: %d, beforeRulesPktInspection: %d, totalRulesAfterFilter: %d, totalRules: %d, totalRulesMatched: %d,\n\t Rapporto: beforeRulesInspectHeader: %f, beforeRulesPktInspection: %f, totalRulesAfterFilter: %f, totalRules: %f, totalRulesMatched:%f ",
+        SCLogInfo("OTHER idon't Know stuff:\n\t beforeRulesInspectHeader: %d, beforeRulesPktInspection: %d, totalRulesAfterFilter: %d, totalRules: %d, totalRulesMatched: %d,\n\t Rapporto: beforeRulesInspectHeader: %f, beforeRulesPktInspection: %f, totalRulesAfterFilter: %f, totalRules: %f, totalRulesMatched:%f ",
                 tv->statskob.smpRules.beforeRulesInspectHeader,
                 tv->statskob.smpRules.beforeRulesPktInspection,
                 tv->statskob.smpRules.totalRulesAfterFilter,
@@ -1614,6 +1623,22 @@ static void TmThreadFree(ThreadVars *tv)
                 ((float)tv->statskob.smpRules.totalRulesAfterFilter)/tv->statskob.packet_total,
                 ((float)tv->statskob.smpRules.totalRules)/tv->statskob.packet_total,
                 ((float)tv->statskob.smpRules.totalRulesMatched)/tv->statskob.packet_total
+            );
+        SCLogInfo("Frame STATS:\n\t TotalRuleOnlyIP:%d, TotalRuleTested:%d TotalRuleMatch%d,\n\t Rapporto: TotalRuleOnlyIP:%f, TotalRuleTested:%f TotalRuleMatch:%f ",
+                tv->statskob.runFrames.beforeRuleHeaderFrame,
+                tv->statskob.runFrames.beforeRuleInspect,
+                tv->statskob.runFrames.matchFrame,
+                ((float)tv->statskob.runFrames.beforeRuleHeaderFrame)/tv->statskob.packet_total,
+                ((float)tv->statskob.runFrames.beforeRuleInspect)/tv->statskob.packet_total,
+                ((float)tv->statskob.runFrames.matchFrame)/tv->statskob.packet_total
+            );
+        SCLogInfo("TX STATS:\n\t TotalRuleOnlyIP:%d, TotalRuleTested:%d TotalRuleMatch%d,\n\t Rapporto: TotalRuleOnlyIP:%f, TotalRuleTested:%f TotalRuleMatch:%f ",
+                tv->statskob.runTX.allrule,
+                tv->statskob.runTX.prefilterRule,
+                tv->statskob.runTX.matchTx,
+                ((float)tv->statskob.runTX.allrule)/tv->statskob.packet_total,
+                ((float)tv->statskob.runTX.prefilterRule)/tv->statskob.packet_total,
+                ((float)tv->statskob.runTX.matchTx)/tv->statskob.packet_total
             );
     }
     ThreadFreeStorage(tv);

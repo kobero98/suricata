@@ -1520,6 +1520,7 @@ static void DetectRunTx(ThreadVars *tv,
                 det_ctx->tx_candidates[array_idx].flags = NULL;
                 det_ctx->tx_candidates[array_idx].stream_reset = 0;
                 array_idx++;
+                tv->statskob.runTX.allrule++;
             }
             PMQ_RESET(&det_ctx->pmq);
         } else {
@@ -1639,11 +1640,12 @@ static void DetectRunTx(ThreadVars *tv,
                     alstate, &tx, s, inspect_flags, can, scratch);
             if (r == 1) {
                 /* match */
+                tv->statskob.runTX.matchTx++;
                 DetectRunPostMatch(tv, det_ctx, p, s);
 
                 const uint8_t alert_flags = (PACKET_ALERT_FLAG_STATE_MATCH | PACKET_ALERT_FLAG_TX);
                 SCLogDebug("%p/%"PRIu64" sig %u (%u) matched", tx.tx_ptr, tx.tx_id, s->id, s->num);
-                SCLogInfo("MAtcho qui");
+                
                 AlertQueueAppend(det_ctx, s, p, tx.tx_id, alert_flags);
             }
             DetectVarProcessList(det_ctx, p->flow, p);

@@ -72,9 +72,13 @@ typedef struct statsDetectRunFrames{
     int beforeRuleInspect;
     int matchFrame;
 }statsDetectRunFrames;
+
 typedef struct statsDetectRunTX{
-    int boh;
+    int prefilterRule;
+    int allrule;
+    int matchTx;
 }statsDetectRunTX;
+
 typedef struct statsMatt{
     int packet_total;
     statsIPOnlyProcessing ipRules;
