@@ -743,7 +743,6 @@ int DetectEngineAppInspectionEngine2Signature(DetectEngineCtx *de_ctx, Signature
                 DetectEngineBufferTypeGetById(de_ctx, s->init_data->buffers[x].id);
         if (b == NULL)
             FatalError("unknown buffer");
-        SCLogInfo("buffer type:%s f:%d p:%d app:%d",b->name,b->frame,b->packet,!(b->frame || b->packet));
         if (b->frame) {
             for (const DetectEngineFrameInspectionEngine *u = de_ctx->frame_inspect_engines;
                     u != NULL; u = u->next) {
@@ -1977,9 +1976,8 @@ bool DetectEnginePktInspectionRun(ThreadVars *tv,
     SCEnter();
 
     for (DetectEnginePktInspectionEngine *e = s->pkt_inspect; e != NULL; e = e->next) {
-        SCLogInfo("%d %s",e->smd->type,sigmatch_table[e->smd->type].name);
         if (e->v1.Callback(det_ctx, e, s, p, alert_flags) != DETECT_ENGINE_INSPECT_SIG_MATCH) {
-            SCLogInfo("sid %u: e %p Callback returned no match", s->id, e);
+            SCLogDebug("sid %u: e %p Callback returned no match", s->id, e);
             return false;
         }
         SCLogDebug("sid %u: e %p Callback returned true", s->id, e);

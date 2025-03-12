@@ -168,7 +168,6 @@ static void DetectRun(ThreadVars *th_v,
                 goto end;
             }
         } else if (p->proto == IPPROTO_UDP) {
-            SCLogInfo("QUA?");
             DetectRunFrames(th_v, de_ctx, det_ctx, p, pflow, &scratch);
         }
 
@@ -840,7 +839,6 @@ static inline void DetectRulePacketRules(
 #ifdef PROFILE_RULES
         smatch = true;
 #endif
-        SCLogInfo("Match trovato");
         DetectRunPostMatch(tv, det_ctx, p, s);
 
         uint64_t txid = PACKET_ALERT_NOTX;
@@ -1161,7 +1159,6 @@ static bool DetectRunTxInspectRule(ThreadVars *tv,
             TRACE_SID_TXS(s->id, tx, "DetectEnginePktInspectionRun no match");
             return false;
         }
-        SCLogInfo("Ma può esse che matcho quaa???");
         /* stream mpm and negated mpm sigs can end up here with wrong proto */
         if (!(AppProtoEquals(s->alproto, f->alproto) || s->alproto == ALPROTO_UNKNOWN)) {
             TRACE_SID_TXS(s->id, tx, "alproto mismatch");

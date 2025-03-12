@@ -501,7 +501,6 @@ static void *ParseAFPConfig(const char *iface)
     } else {
         SCLogInfo("il file ebpf viene caricato?");
 #ifdef HAVE_PACKET_XDP
-        SCLogInfo("Qui ci entra");
         aconf->ebpf_t_config.mode = AFP_MODE_XDP_BYPASS;
         aconf->ebpf_t_config.flags |= EBPF_XDP_CODE;
         aconf->xdp_filter_file = ebpf_file;

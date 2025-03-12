@@ -440,7 +440,6 @@ static TmEcode OpenXSKSocket(AFXDPThreadVars *ptv,int xsk_map_fd)
                  ptv->umem.umem, &ptv->xsk.rx, &ptv->xsk.tx, &ptv->xsk.cfg))) {
         char errormsg[1024];
         libxdp_strerror(ret, errormsg, sizeof(errormsg));
-        SCLogInfo("%s",errormsg);
         SCLogError("%s, %d",ptv->livedev->dev, ptv->xsk.queue.queue_num);
         SCLogError("Failed to create socket: %s", strerror(-ret));
         SCLogError("%d %d %d %d",ENOPROTOOPT,ENOMEM,EFAULT,EINVAL);
@@ -522,7 +521,6 @@ static TmEcode AFXDPTryReopen(AFXDPThreadVars *ptv)
 {
     AFXDPCloseSocket(ptv);
     usleep(RECONNECT_TIMEOUT);
-    SCLogInfo("MA QUI CI PASSOOOO MAIIIII==??????");
     int if_flags = GetIfaceFlags(ptv->iface);
     if (if_flags == -1) {
         SCLogDebug("Couldn't get flags for interface '%s'", ptv->iface);
@@ -601,7 +599,6 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
     SCEnter();
 
     AFXDPIfaceConfig *afxdpconfig = (AFXDPIfaceConfig *)initdata;
-    SCLogInfo("how many init thread?");
     if (initdata == NULL) {
         SCLogError("initdata == NULL");
         SCReturnInt(TM_ECODE_FAILED);
@@ -702,9 +699,6 @@ static TmEcode ReceiveAFXDPThreadInit(ThreadVars *tv, const void *initdata, void
             SCLogError("ERR: Attach program: %s\n", errmsg);
             SCReturnInt(TM_ECODE_FAILED);
         }
-        SCLogInfo("Program attach\n");
-        SCLogInfo("Program:\n \tid:%d\n\tprog name:%s\n\tfind path:%s",xdp_opts.id,xdp_opts.prog_name,xdp_opts.find_filename);
-
         /* We also need to load the xsks_map */
         map = bpf_object__find_map_by_name(xdp_program__bpf_obj(prog), "xsks_map");
         xsk_map_fd = bpf_map__fd(map);
@@ -758,7 +752,6 @@ static TmEcode ReceiveAFXDPLoop(ThreadVars *tv, void *data, void *slot)
     // Indicate that the thread is actually running its application level code (i.e., it can poll
     // packets)
     TmThreadsSetFlag(tv, THV_RUNNING);
-    SCLogInfo("Receive mode afxdp");
     PacketPoolWait();
     while (1) {
         /* Start by checking the state of our interface */
@@ -852,16 +845,14 @@ static TmEcode ReceiveAFXDPLoop(ThreadVars *tv, void *data, void *slot)
             // Estraiamo l’IP sorgente
 		    __u32 ip = meta->src_ip;
             __u32 hash = meta->hash;
-            if (ip != 0) {
+            if (hash != 0) {
                 // Convertiamo in dotted-decimal e stampiamo
                 struct in_addr in;
                 in.s_addr = ip;  // network order
                 char ip_str[INET_ADDRSTRLEN] = {0};
                 inet_ntop(AF_INET, &in, ip_str, sizeof(ip_str));
-                SCLogInfo(">>> Received packet (len=%u), metadata src_ip=%s hash: %" PRIu32 "\n",len, ip_str,hash);
-		    }else{
-                SCLogInfo("not received");
-            }
+		    }
+
             ptv->bytes += len;
 
             p->afxdp_v.fq_idx = idx_fq++;

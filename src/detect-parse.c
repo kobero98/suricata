@@ -1883,7 +1883,6 @@ static int SigMatchListLen(SigMatch *sm)
 SigMatchData* SigMatchList2DataArray(SigMatch *head)
 {
     int len = SigMatchListLen(head);
-    SCLogInfo("len: %d",len);
     if (len == 0)
         return NULL;
 
@@ -1898,7 +1897,6 @@ SigMatchData* SigMatchList2DataArray(SigMatch *head)
     for (; sm != NULL; sm = sm->next, smd++) {
         smd->type = sm->type;
         smd->ctx = sm->ctx;
-        SCLogInfo("%s",sigmatch_table[smd->type].name);
         sm->ctx = NULL; // SigMatch no longer owns the ctx
         smd->is_last = (sm->next == NULL);
     }
@@ -2326,7 +2324,6 @@ static Signature *SigInitHelper(DetectEngineCtx *de_ctx, const char *sigstr,
 
     /* check what the type of this sig is */
     SignatureSetType(de_ctx, sig);
-    SCLogInfo("Signature type -> %d",sig->type);
     if (sig->type == SIG_TYPE_IPONLY) {
         /* For IPOnly */
         if (IPOnlySigParseAddress(de_ctx, sig, parser.src, SIG_DIREC_SRC ^ dir) < 0)

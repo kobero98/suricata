@@ -1969,8 +1969,6 @@ int SigPrepareStage4(DetectEngineCtx *de_ctx)
 {
     SCEnter();
 
-    //SCLogInfo("sgh's %"PRIu32, de_ctx->sgh_array_cnt);
-
     uint32_t cnt = 0;
     for (uint32_t idx = 0; idx < de_ctx->sgh_array_cnt; idx++) {
         SigGroupHead *sgh = de_ctx->sgh_array[idx];
@@ -2039,12 +2037,9 @@ extern bool rule_engine_analysis_set;
 static int SigMatchPrepare(DetectEngineCtx *de_ctx)
 {
     SCEnter();
-    SCLogInfo("Sig Match Prepare start");
     Signature *s = de_ctx->sig_list;
     for (; s != NULL; s = s->next) {
         
-        
-        SCLogInfo("%d %s",s->id,s->sig_str);
         /* set up inspect engines */
         DetectEngineAppInspectionEngine2Signature(de_ctx, s);
 
@@ -2054,7 +2049,6 @@ static int SigMatchPrepare(DetectEngineCtx *de_ctx)
             if (type == DETECT_SM_LIST_PMATCH && (s->init_data->init_flags & SIG_FLAG_INIT_STATE_MATCH))
                 continue;
             SigMatch *sm = s->init_data->smlists[type];
-            SCLogInfo("type: %s",DetectSigmatchListEnumToString(type));
             s->sm_arrays[type] = SigMatchList2DataArray(sm);
         }
         /* set up the pkt inspection engines */

@@ -110,7 +110,6 @@ static TmEcode ConfigSetThreads(AFXDPIfaceConfig *aconf, const char *entry_str)
     }
 
     const int nr_queues = GetIfaceRSSQueuesNum(aconf->iface);
-    SCLogInfo("How many queues?%d",nr_queues);
     if (strcmp(entry_str, "auto") == 0) {
 
         const int nr_cores = (int)UtilCpuGetNumProcessorsOnline();
@@ -211,7 +210,6 @@ static void *ParseAFXDPConfig(const char *iface)
     /* Threading */
     confstr = "auto";
     (void)ConfGetChildValueWithDefault(if_root, if_default, "threads", &confstr);
-    SCLogInfo("confstr di threads:%s",confstr);
     if (ConfigSetThreads(aconf, confstr) != TM_ECODE_OK) {
         SCLogInfo("TM NOT OK");
         aconf->DerefFunc(aconf);
@@ -317,12 +315,10 @@ finalize:
 
 static int AFXDPConfigGetThreadsCount(void *conf)
 {
-    SCLogInfo("AFXDP Config threads count");
     if (conf == NULL)
         FatalError("Configuration file is NULL");
 
     AFXDPIfaceConfig *afxdp_conf = (AFXDPIfaceConfig *)conf;
-    SCLogInfo("dalla conf i threads sono:%d",afxdp_conf->threads);
     return afxdp_conf->threads;
 }
 
