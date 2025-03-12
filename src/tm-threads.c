@@ -1607,7 +1607,7 @@ static void TmThreadFree(ThreadVars *tv)
             );
         SCLogInfo("OTHER RULES STATS:\n 
                 \t beforeRulesInspectHeader:%d, beforeRulesPktInspection:%d, totalRulesAfterFilter:%d, totalRules:%d, totalRulesMatched:%d\n
-                \t Rapporto: beforeRulesInspectHeader:%d, beforeRulesPktInspection:%d, totalRulesAfterFilter:%d, totalRules:%d, totalRulesMatched:%d\n",
+                \t Rapporto: beforeRulesInspectHeader:%f, beforeRulesPktInspection:%f, totalRulesAfterFilter:%f, totalRules:%f, totalRulesMatched:%f\n",
                 tv->statskob.smpRules.beforeRulesInspectHeader,
                 tv->statskob.smpRules.beforeRulesPktInspection,
                 tv->statskob.smpRules.totalRulesAfterFilter,
