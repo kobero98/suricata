@@ -1595,12 +1595,24 @@ static void TmThreadFree(ThreadVars *tv)
         SCLogInfo("Final Statistic:");
         SCLogInfo("Total_packet: %d",tv->statskob.packet_total);
     if(tv->statskob.packet_total>0){   
-        SCLogInfo("IP RULES STATS: %f, %f, %f",
+        SCLogInfo("IP RULES STATS:\n
+                \t TotalRuleOnlyIP:%d, TotalRuleTested:%d TotalRuleMatch%d,\n
+                \t Rapporto: TotalRuleOnlyIP:%f, TotalRuleTested:%f TotalRuleMatch%f,",
+                tv->statskob.ipRules.TotalRuleOnlyIP,
+                tv->statskob.ipRules.TotalRuleOnlyTested,
+                tv->statskob.ipRules.TotalRuleOnlyMatch,
                 ((float)tv->statskob.ipRules.TotalRuleOnlyIP)/tv->statskob.packet_total,
-                ((float)tv->statskob.ipRules.TotalRuleOnlyIP)/tv->statskob.packet_total,
+                ((float)tv->statskob.ipRules.TotalRuleTested)/tv->statskob.packet_total,
                 ((float)tv->statskob.ipRules.TotalRuleMatch)/tv->statskob.packet_total
             );
-        SCLogInfo("OTHER RULES STATS: %f, %f, %f, %f, %f",
+        SCLogInfo("OTHER RULES STATS:\n 
+                \t beforeRulesInspectHeader:%d, beforeRulesPktInspection:%d, totalRulesAfterFilter:%d, totalRules:%d, totalRulesMatched:%d\n
+                \t Rapporto: beforeRulesInspectHeader:%d, beforeRulesPktInspection:%d, totalRulesAfterFilter:%d, totalRules:%d, totalRulesMatched:%d\n",
+                tv->statskob.smpRules.beforeRulesInspectHeader,
+                tv->statskob.smpRules.beforeRulesPktInspection,
+                tv->statskob.smpRules.totalRulesAfterFilter,
+                tv->statskob.smpRules.totalRules,
+                tv->statskob.smpRules.totalRulesMatched,
                 ((float)tv->statskob.smpRules.beforeRulesInspectHeader)/tv->statskob.packet_total,
                 ((float)tv->statskob.smpRules.beforeRulesPktInspection)/tv->statskob.packet_total,
                 ((float)tv->statskob.smpRules.totalRulesAfterFilter)/tv->statskob.packet_total,
