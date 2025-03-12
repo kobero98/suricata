@@ -1595,12 +1595,12 @@ static void TmThreadFree(ThreadVars *tv)
         SCLogInfo("Final Statistic:");
         SCLogInfo("Total_packet: %d",tv->statskob.packet_total);
     if(tv->statskob.packet_total>0){   
-        SCLogInfo("IP RULES STATS: %d, %d, %d",
+        SCLogInfo("IP RULES STATS: %f, %f, %f",
                 tv->statskob.ipRules.TotalRuleOnlyIP/tv->statskob.packet_total,
                 tv->statskob.ipRules.TotalRuleOnlyIP/tv->statskob.packet_total,
                 tv->statskob.ipRules.TotalRuleMatch/tv->statskob.packet_total
             );
-        SCLogInfo("OTHER RULES STATS: %d, %d, %d, %d, %d",
+        SCLogInfo("OTHER RULES STATS: %f, %f, %f, %f, %f",
                 tv->statskob.smpRules.beforeRulesInspectHeader/tv->statskob.packet_total,
                 tv->statskob.smpRules.beforeRulesPktInspection/tv->statskob.packet_total,
                 tv->statskob.smpRules.totalRulesAfterFilter/tv->statskob.packet_total,
