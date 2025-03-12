@@ -1597,10 +1597,10 @@ static void TmThreadFree(ThreadVars *tv)
     if(tv->statskob.packet_total>0){   
         SCLogInfo("IP RULES STATS:\n
                 \t TotalRuleOnlyIP:%d, TotalRuleTested:%d TotalRuleMatch%d,\n
-                \t Rapporto: TotalRuleOnlyIP:%f, TotalRuleTested:%f TotalRuleMatch%f,",
+                \t Rapporto: TotalRuleOnlyIP:%f, TotalRuleTested:%f TotalRuleMatch%f",
                 tv->statskob.ipRules.TotalRuleOnlyIP,
-                tv->statskob.ipRules.TotalRuleOnlyTested,
-                tv->statskob.ipRules.TotalRuleOnlyMatch,
+                tv->statskob.ipRules.TotalRuleTested,
+                tv->statskob.ipRules.TotalRuleMatch,
                 ((float)tv->statskob.ipRules.TotalRuleOnlyIP)/tv->statskob.packet_total,
                 ((float)tv->statskob.ipRules.TotalRuleTested)/tv->statskob.packet_total,
                 ((float)tv->statskob.ipRules.TotalRuleMatch)/tv->statskob.packet_total
