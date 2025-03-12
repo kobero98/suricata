@@ -1643,6 +1643,7 @@ static void DetectRunTx(ThreadVars *tv,
 
                 const uint8_t alert_flags = (PACKET_ALERT_FLAG_STATE_MATCH | PACKET_ALERT_FLAG_TX);
                 SCLogDebug("%p/%"PRIu64" sig %u (%u) matched", tx.tx_ptr, tx.tx_id, s->id, s->num);
+                SCLogInfo("MAtcho qui");
                 AlertQueueAppend(det_ctx, s, p, tx.tx_id, alert_flags);
             }
             DetectVarProcessList(det_ctx, p->flow, p);
@@ -1777,7 +1778,7 @@ static void DetectRunFrames(ThreadVars *tv, DetectEngineCtx *de_ctx, DetectEngin
         /* run rules: inspect the match candidates */
         for (uint32_t i = 0; i < array_idx; i++) {
             const Signature *s = det_ctx->tx_candidates[i].s;
-
+            tv->statskob.runFrames.beforeRuleHeaderFrame++;
             /* deduplicate: rules_array is sorted, but not deduplicated.
              * As they are back to back in that case we can check for it
              * here. We select the stored state one as that comes first
@@ -1794,10 +1795,12 @@ static void DetectRunFrames(ThreadVars *tv, DetectEngineCtx *de_ctx, DetectEngin
             /* call individual rule inspection */
             RULE_PROFILING_START(p);
             bool r = DetectRunInspectRuleHeader(p, f, s, s->flags, s->proto.flags);
+            tv->statskob.runFrames.beforeRuleInspect++;
             if (r == true) {
                 r = DetectRunFrameInspectRule(tv, det_ctx, s, f, p, frames, frame);
                 if (r == true) {
                     /* match */
+                    tv->statskob.runFrames.matchFrame++;
                     DetectRunPostMatch(tv, det_ctx, p, s);
 
                     uint8_t alert_flags = (PACKET_ALERT_FLAG_STATE_MATCH | PACKET_ALERT_FLAG_FRAME);

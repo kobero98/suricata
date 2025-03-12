@@ -67,11 +67,20 @@ typedef struct statsDetectRunGetRuleGroup{
     int beforeRulesPktInspection;
     int totalRulesMatched;
 }statsDetectRunGetRuleGroup;
+typedef struct statsDetectRunFrames{
+    int beforeRuleHeaderFrame;
+    int beforeRuleInspect;
+    int matchFrame;
+}statsDetectRunFrames;
+typedef struct statsDetectRunTX{
 
+}statsDetectRunTX;
 typedef struct statsMatt{
     int packet_total;
     statsIPOnlyProcessing ipRules;
     statsDetectRunGetRuleGroup smpRules;
+    statsDetectRunFrames runFrames;
+    statsDetectRunTX runTX;
 }statsKob;
 
 /** \brief Per thread variable structure */
