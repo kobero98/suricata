@@ -1606,8 +1606,8 @@ static void TmThreadFree(ThreadVars *tv)
                 ((float)tv->statskob.ipRules.TotalRuleMatch)/tv->statskob.packet_total
             );
         SCLogInfo("OTHER RULES STATS:\n 
-                \t beforeRulesInspectHeader:%d, beforeRulesPktInspection:%d, totalRulesAfterFilter:%d, totalRules:%d, totalRulesMatched:%d,\n
-                \t Rapporto: beforeRulesInspectHeader:%f, beforeRulesPktInspection:%f, totalRulesAfterFilter:%f, totalRules:%f, totalRulesMatched:%f ",
+                \t beforeRulesInspectHeader: %d, beforeRulesPktInspection: %d, totalRulesAfterFilter: %d, totalRules: %d, totalRulesMatched: %d,\n
+                \t Rapporto: beforeRulesInspectHeader: %f, beforeRulesPktInspection: %f, totalRulesAfterFilter: %f, totalRules: %f, totalRulesMatched:%f ",
                 tv->statskob.smpRules.beforeRulesInspectHeader,
                 tv->statskob.smpRules.beforeRulesPktInspection,
                 tv->statskob.smpRules.totalRulesAfterFilter,
