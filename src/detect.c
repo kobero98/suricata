@@ -1794,8 +1794,8 @@ static void DetectRunFrames(ThreadVars *tv, DetectEngineCtx *de_ctx, DetectEngin
             /* call individual rule inspection */
             RULE_PROFILING_START(p);
             bool r = DetectRunInspectRuleHeader(p, f, s, s->flags, s->proto.flags);
-            tv->statskob.runFrames.beforeRuleInspect++;
             if (r == true) {
+                tv->statskob.runFrames.beforeRuleInspect++;
                 r = DetectRunFrameInspectRule(tv, det_ctx, s, f, p, frames, frame);
                 if (r == true) {
                     /* match */
