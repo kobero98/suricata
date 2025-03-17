@@ -1604,24 +1604,24 @@ static void TmThreadFree(ThreadVars *tv)
         SCLogInfo("Final Statistic:");
         SCLogInfo("Total_packet: %d",tv->statskob.packet_total);
     if(tv->statskob.packet_total>0){   
-        SCLogInfo("IP RULES STATS:\n\t TotalRules: %d, TotalRuleTested: %d TotalRuleMatched: %d,\n",
+        SCLogInfo("IP RULES STATS: TotalRules: %d, TotalRuleTested: %d TotalRuleMatched: %d,\n",
                 tv->statskob.ipRules.TotalRuleOnlyIP,
                 tv->statskob.ipRules.TotalRuleTested,
                 tv->statskob.ipRules.TotalRuleMatch
             );
-        SCLogInfo("OTHER stuff:\n\t TotalRules: %d, totalRulesAfterFilter: %d, beforeRulesInspectionHeader: %d, BeforeRulesPktInspection: %d, TotalRuleMatched: %d,\n",
+        SCLogInfo("OTHER stuff: TotalRules: %d, totalRulesAfterFilter: %d, beforeRulesInspectionHeader: %d, BeforeRulesPktInspection: %d, TotalRuleMatched: %d,\n",
                 tv->statskob.smpRules.totalRules,
                 tv->statskob.smpRules.totalRulesAfterFilter,
                 tv->statskob.smpRules.beforeRulesInspectHeader,
                 tv->statskob.smpRules.beforeRulesPktInspection,
                 tv->statskob.smpRules.totalRulesMatched
             );
-        SCLogInfo("Frame STATS:\n\t TotalRules: %d, beforeRuleInspection: %d totalRulesMatched: %d,\n",
+        SCLogInfo("Frame STATS: TotalRules: %d, beforeRuleInspection: %d totalRulesMatched: %d,\n",
                 tv->statskob.runFrames.beforeRuleHeaderFrame,
                 tv->statskob.runFrames.beforeRuleInspect,
                 tv->statskob.runFrames.matchFrame
             );
-        SCLogInfo("TX STATS:\n\t TotalRules: %d, prefilterRule: %d TotalRuleMatched: %d,\n",
+        SCLogInfo("TX STATS: TotalRules: %d, prefilterRule: %d TotalRuleMatched: %d,\n",
                 tv->statskob.runTX.allrule,
                 tv->statskob.runTX.prefilterRule,
                 tv->statskob.runTX.matchTx
