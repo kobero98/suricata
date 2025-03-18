@@ -920,6 +920,7 @@ static int SigParseOptions(DetectEngineCtx *de_ctx, Signature *s, char *optstr, 
 
     /* Call option parsing */
     st = SigTableGet(optname);
+    st->utility++;
     if (st == NULL || st->Setup == NULL) {
         SCLogError("unknown rule keyword '%s'.", optname);
         goto error;

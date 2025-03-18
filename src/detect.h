@@ -1312,7 +1312,7 @@ typedef struct SigTableElmt_ {
     const char *alias;    /**< name alias */
     const char *desc;
     const char *url;
-
+    unsigned int utility;
 } SigTableElmt;
 
 /* event code */
