@@ -457,7 +457,9 @@ static void DetectFileHandlerRegister(void)
 
 void SigTableCleanup(void)
 {
+    int i;
     if (sigmatch_table != NULL) {
+        for(i=0;i<DETECT_TBLSIZE_STATIC;i++) SCLogInfo("SigMatchTable: %s:%d",sigmatch_table[i].name,sigmatch_table[i].utility);
         SCFree(sigmatch_table);
         sigmatch_table = NULL;
         DETECT_TBLSIZE = 0;
