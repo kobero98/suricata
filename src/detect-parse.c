@@ -920,11 +920,11 @@ static int SigParseOptions(DetectEngineCtx *de_ctx, Signature *s, char *optstr, 
 
     /* Call option parsing */
     st = SigTableGet(optname);
-    st->utility++;
     if (st == NULL || st->Setup == NULL) {
         SCLogError("unknown rule keyword '%s'.", optname);
         goto error;
     }
+    st->utility;
 
     if (!(st->flags & (SIGMATCH_NOOPT|SIGMATCH_OPTIONAL_OPT))) {
         if (optvalue == NULL || strlen(optvalue) == 0) {
@@ -1659,7 +1659,16 @@ void SigFree(DetectEngineCtx *de_ctx, Signature *s)
     if (s == NULL)
         return;
 
-    int i;
+    SigMatchData * sm;
+     /*\
+    | * |  Inserire scrittura di stampa
+    | * | 
+    | * | 
+     \*/
+    SCLogInfo("Sid:%d",s->id);
+    for(sm = s->sm_arrays[1];sm->is_last;sm++){
+        SCLogInfo("%d]%s",sm->type,sigmatch_table[sm->type].name);
+    }
 
     if (s->init_data && s->init_data->transforms.cnt) {
         for(i = 0; i < s->init_data->transforms.cnt; i++) {

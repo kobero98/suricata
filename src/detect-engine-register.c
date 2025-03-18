@@ -458,13 +458,23 @@ static void DetectFileHandlerRegister(void)
 void SigTableCleanup(void)
 {
     int i;
+    int countHowManyMatchFunctionExist=0;
+    int countHowManyMatchFunctionUsed=0;
+    int howMatchIsUsed=0;
     if (sigmatch_table != NULL) {
         
         for(i=0;i<DETECT_TBLSIZE_STATIC;i++) 
         {
             int ret = sigmatch_table[i].Match == NULL;
-            SCLogInfo("SigMatchTable: %s:%d have MatchFunction:%d",sigmatch_table[i].name,sigmatch_table[i].utility,ret);
+            if(ret)
+                countHowManyMatchFunctionExist++;
+            if(sigmatch_table[i].utility)
+                howMatchIsUsed++;
+            if(ret && sigmatch_table[i].utility>0)
+                countHowManyMatchFunctionUsed++;
+            SCLogInfo("SigMatchTable: %s: %d have MatchFunction:%d",sigmatch_table[i].name,sigmatch_table[i].utility,ret);
         }
+        SCLogInfo("Match function:%d , vengono usate: %d, le effettive mathchfunction Usate: %d",countHowManyMatchFunctionExist,howMatchIsUsed,countHowManyMatchFunctionUsed);
         SCFree(sigmatch_table);
         sigmatch_table = NULL;
         DETECT_TBLSIZE = 0;
