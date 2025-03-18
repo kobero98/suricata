@@ -1658,7 +1658,7 @@ void SigFree(DetectEngineCtx *de_ctx, Signature *s)
 {
     if (s == NULL)
         return;
-
+    int i;
     SigMatchData * sm;
      /*\
     | * |  Inserire scrittura di stampa
