@@ -924,7 +924,7 @@ static int SigParseOptions(DetectEngineCtx *de_ctx, Signature *s, char *optstr, 
         SCLogError("unknown rule keyword '%s'.", optname);
         goto error;
     }
-    st->utility;
+    st->utility++;
 
     if (!(st->flags & (SIGMATCH_NOOPT|SIGMATCH_OPTIONAL_OPT))) {
         if (optvalue == NULL || strlen(optvalue) == 0) {
