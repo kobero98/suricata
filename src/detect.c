@@ -110,6 +110,11 @@ static void DetectRun(ThreadVars *th_v,
                     : "noflow",
             PktSrcToString(p->pkt_src));
     th_v->statskob.packet_total++;
+    int totalRuleIp = th_v->statskob.ipRules.TotalRuleOnlyIP;
+    int totalRulempm = th_v->statskob.smpRules.totalRulesAfterFilter;
+    int totalRuleFrame = th_v->statskob.runFrames.beforeRuleHeaderFrame;
+    int totalRuleTX = th_v->statskob.runTX.allrule;
+    
     /* bail early if packet should not be inspected */
     if (p->flags & PKT_NOPACKET_INSPECTION) {
         /* nothing to do */
@@ -182,6 +187,12 @@ static void DetectRun(ThreadVars *th_v,
     }
 
 end:
+    if(
+        totalRuleIp !=th_v->statskob.ipRules.TotalRuleOnlyIP ||
+        totalRulempm != th_v->statskob.smpRules.totalRulesAfterFilter ||
+        totalRuleFrame != th_v->statskob.runFrames.beforeRuleHeaderFrame ||
+        totalRuleTX != th_v->statskob.runTX.allrule
+     ) th_v->statskob.packet_notMatch++;
     DetectRunPostRules(th_v, de_ctx, det_ctx, p, pflow, &scratch);
 
     DetectRunCleanup(det_ctx, p, pflow);

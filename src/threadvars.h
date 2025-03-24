@@ -81,6 +81,7 @@ typedef struct statsDetectRunTX{
 
 typedef struct statsMatt{
     int packet_total;
+    int packet_notMatch;
     statsIPOnlyProcessing ipRules;
     statsDetectRunGetRuleGroup smpRules;
     statsDetectRunFrames runFrames;

@@ -1603,6 +1603,8 @@ static void TmThreadFree(ThreadVars *tv)
     
         SCLogInfo("Final Statistic:");
         SCLogInfo("Total_packet: %d",tv->statskob.packet_total);
+        SCLogInfo("Total_packet_with_no_test: %d",tv->statskob.packet_notMatch);
+        SCLogInfo("Total_packet_tested: %d",tv->statskob.packet_total - tv->statskob.packet_notMatch);
     if(tv->statskob.packet_total>0){   
         SCLogInfo("IP RULES STATS: TotalRules: %d, TotalRuleTested: %d TotalRuleMatched: %d,\n",
                 tv->statskob.ipRules.TotalRuleOnlyIP,
