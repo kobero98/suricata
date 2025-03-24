@@ -1639,6 +1639,7 @@ static void SigMatchFreeArrays(DetectEngineCtx *de_ctx, Signature *s, int ctxs)
                 if (ctxs) {
                     SigMatchData *smd = s->sm_arrays[type];
                     while(1) {
+                        SCLogInfo("sm_array: (%d)-[%d]:%s",type,smd->type,sigmatch_table[smd->type].name);
                         if (sigmatch_table[smd->type].Free != NULL) {
                             sigmatch_table[smd->type].Free(de_ctx, smd->ctx);
                         }
@@ -1690,6 +1691,7 @@ void SigFree(DetectEngineCtx *de_ctx, Signature *s)
             SigMatch *sm = s->init_data->smlists[i];
             while (sm != NULL) {
                 SigMatch *nsm = sm->next;
+                SCLogInfo("init data smlist: sm (%d)-[%d]:%s",i,sm->type,sigmatch_table[sm->type].name);
                 SigMatchFree(de_ctx, sm);
                 sm = nsm;
             }
@@ -1699,6 +1701,7 @@ void SigFree(DetectEngineCtx *de_ctx, Signature *s)
             SigMatch *sm = s->init_data->buffers[x].head;
             while (sm != NULL) {
                 SigMatch *nsm = sm->next;
+                SCLogInfo("init data buffer: sm (%d)-[%d]:%s",i,sm->type,sigmatch_table[sm->type].name);
                 SigMatchFree(de_ctx, sm);
                 sm = nsm;
             }
