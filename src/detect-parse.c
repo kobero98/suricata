@@ -1667,11 +1667,12 @@ void SigFree(DetectEngineCtx *de_ctx, Signature *s)
     | * | 
      \*/
     SCLogInfo("Sid:%d",s->id);
+    SCLogInfo("%s",s->sig_str);
     for(i=0;i<7;i++){
         for(sm = s->sm_arrays[i];;sm++){
             if(sm==NULL) 
                 break;
-            SCLogInfo("(%d)-[%d]%s",i,sm->type,sigmatch_table[sm->type].name);
+            SCLogInfo("(%d)-[%d]:%s",i,sm->type,sigmatch_table[sm->type].name);
             if(sm->is_last)
                 break;
         }

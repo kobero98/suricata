@@ -901,7 +901,7 @@ void DetectEngineAppInspectionEngineSignatureFree(DetectEngineCtx *de_ctx, Signa
             continue;
         SigMatchData *smd = bufs[i];
         while (1) {
-            SCLogInfo("qui non so cosa sto liberando %d,%s",smd->type,sigmatch_table[smd->type].name);
+            SCLogInfo("[%d]:%s",smd->type,sigmatch_table[smd->type].name);
             if (sigmatch_table[smd->type].Free != NULL) {
                 sigmatch_table[smd->type].Free(de_ctx, smd->ctx);
             }
