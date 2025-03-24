@@ -820,19 +820,16 @@ void DetectEngineAppInspectionEngineSignatureFree(DetectEngineCtx *de_ctx, Signa
 
     DetectEngineAppInspectionEngine *ie = s->app_inspect;
     while (ie) {
-        SCLogInfo("detect Engine APP Inspect type: %d",ie->smd->type);
         ie = ie->next;
         engines++;
     }
     DetectEnginePktInspectionEngine *e = s->pkt_inspect;
     while (e) {
-        SCLogInfo("detect Engine APP Inspect type: %d",e->smd->type);
         e = e->next;
         engines++;
     }
     DetectEngineFrameInspectionEngine *u = s->frame_inspect;
     while (u) {
-        SCLogInfo("detect Engine APP Inspect type: %d",u->smd->type);
         u = u->next;
         engines++;
     }
