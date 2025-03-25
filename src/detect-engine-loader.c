@@ -165,6 +165,7 @@ static int DetectLoadSigFile(
         de_ctx->rule_line = lineno - multiline;
 
         sig = DetectEngineAppendSig(de_ctx, line);
+        SCLogInfo("%s",sig->sig_str);
         SCLogInfo("%d %d %d %d",sig->addr_dst_match4->ip,sig->addr_dst_match4->ip2,sig->addr_src_match4->ip,sig->addr_src_match4->ip2);
         //QUI AGGIUNGO LA MIA STRUTTURA
         if(sig->addr_dst_match4->ip == sig->addr_dst_match4->ip2 && sig->addr_src_match4->ip == sig->addr_src_match4->ip2){
