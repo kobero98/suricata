@@ -165,6 +165,13 @@ static int DetectLoadSigFile(
         de_ctx->rule_line = lineno - multiline;
 
         sig = DetectEngineAppendSig(de_ctx, line);
+
+        //QUI AGGIUNGO LA MIA STRUTTURA
+        if(sig->addr_dst_match4.ip == sig->addr_dst_match4.ip2 && sig->addr_src_match4.ip == sig->addr_src_match4.ip2){
+            SCLogInfo("sig:%d",sig->id);
+        }
+        
+
         if (sig != NULL) {
             if (rule_engine_analysis_set || fp_engine_analysis_set) {
                 if (fp_engine_analysis_set) {
